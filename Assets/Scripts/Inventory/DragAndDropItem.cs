@@ -49,9 +49,14 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         transform.position = oldSlot.transform.position;
         if (eventData.pointerCurrentRaycast.gameObject.name == "UIBG")
         {
-            GameObject itemObject = Instantiate(oldSlot.Item.itemPrefab, player.position + Vector3.up + player.forward, Quaternion.identity);
-            itemObject.GetComponent<Item>().amount = oldSlot.Amount;
-            oldSlot.ResetData();
+            //GameObject itemObject = Instantiate(oldSlot.Item.itemPrefab, player.position + Vector3.up + player.forward, Quaternion.identity);
+            //itemObject.GetComponent<Item>().amount = oldSlot.Amount;
+            //oldSlot.ResetData();
+            return;
+        }
+        else if (eventData.pointerCurrentRaycast.gameObject.name == "Inventory")
+        {
+            return;
         }
         else if (eventData.pointerCurrentRaycast.gameObject.transform.parent.parent.GetComponent<InventorySlot>() != null)
         {
@@ -90,6 +95,10 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     void ExchangeSlotData(InventorySlot newSlot) //newSlot - куда перетаскиваем, oldSlot - откуда 
     {
+        if (oldSlot == newSlot)
+        {
+            return;
+        }
         bool isHalf = Input.GetKey(KeyCode.LeftShift);
         bool isOne = Input.GetKey(KeyCode.LeftControl);
 

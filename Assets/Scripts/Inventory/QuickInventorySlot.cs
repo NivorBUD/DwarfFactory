@@ -8,11 +8,11 @@ public class QuickInventorySlot : MonoBehaviour
     [SerializeField] private Image nonActiveSprite, activeSprite;
 
     public bool IsActive {  get; private set; }
-    private InventorySlot slot;
+    public InventorySlot Slot { get; private set; }
 
     private void Awake()
     {
-        slot = GetComponent<InventorySlot>();
+        Slot = GetComponent<InventorySlot>();
     }
 
     public void ChangeActive()
@@ -20,11 +20,11 @@ public class QuickInventorySlot : MonoBehaviour
         IsActive = !IsActive;
         if (IsActive)
         {
-            slot.BGImage.color = new Color(1, 0.6f, 0.6f, 1);
+            Slot.BGImage.color = new Color(1, 0.6f, 0.6f, 1);
         }
         else
         {
-            slot.BGImage.color = new Color(1, 1, 1, 1);
+            Slot.BGImage.color = new Color(1, 1, 1, 1);
         }
     }
 }

@@ -9,7 +9,7 @@ public class InventorySlot : MonoBehaviour
     public ItemScriptableObject Item { get; private set; }
     public int Amount { get; private set; }
 
-    public int EmptyAmount => Item.maximumAmount - Amount;
+    public int EmptyAmount => Item ? Item.maximumAmount - Amount : 0;
 
     public bool isEmpty = true;
     public Image iconImage;
@@ -36,7 +36,24 @@ public class InventorySlot : MonoBehaviour
         textAmount.text = Amount.ToString();
 
         if (GetComponent<ChestSlot>() != null)
+        {
             GetComponent<ChestSlot>().UpdateInfo(Item, Amount);
+        }
+    }
+
+    public void RemoveAmount(int amount)
+    {
+        Amount -= amount;
+        if (Amount <= 0)
+        {
+            ResetData();
+        }
+        textAmount.text = Amount == 0 ? "" : Amount.ToString();
+
+        if (GetComponent<ChestSlot>() != null)
+        {
+            GetComponent<ChestSlot>().UpdateInfo(Item, Amount);
+        }    
     }
 
     public void PlaceItem(ItemScriptableObject item, int amount)

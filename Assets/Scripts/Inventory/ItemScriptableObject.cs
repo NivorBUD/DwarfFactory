@@ -5,6 +5,7 @@ using UnityEngine;
 public enum ItemType
 {
     Default,
+    Building,
     Weapon
 }
 

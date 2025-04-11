@@ -13,7 +13,8 @@ public class InventoryManager : MonoBehaviour
     public Chest OpenChest { get; private set; }
 
     [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
-    private List<InventorySlot> inventorySlots, chestInventorySlots;
+    private List<InventorySlot> inventorySlots, chestInventorySlots, quickInventorySlots;
+
     private bool isOpened;
     private Camera mainCamera;
     private float reachDistance = 20;
@@ -22,6 +23,7 @@ public class InventoryManager : MonoBehaviour
     {
         inventorySlots = new();
         chestInventorySlots = new();
+        quickInventorySlots = new();
         Instance = this;
         mainCamera = Camera.main;
 
@@ -48,6 +50,13 @@ public class InventoryManager : MonoBehaviour
                 chestInventorySlots.Add(chestInventory.transform.GetChild(i).GetComponent<InventorySlot>());
             }
         }
+        for (int i = 0; i < quickSlots.transform.childCount; i++)
+        {
+            if (quickSlots.transform.GetChild(i).GetComponent<InventorySlot>() != null)
+            {
+                quickInventorySlots.Add(quickSlots.transform.GetChild(i).GetComponent<InventorySlot>());
+            }
+        }
     }
 
     private void Update()
@@ -55,8 +64,8 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
             CloseOpenInventory();
 
-        if (Input.GetMouseButtonDown(0))
-            TryToGetItem();
+        //if (Input.GetMouseButtonDown(0))
+        //    TryToGetItem();
     }
 
     private void TryToGetItem()
@@ -79,8 +88,8 @@ public class InventoryManager : MonoBehaviour
         isOpened = !isOpened;
         inventory.SetActive(isOpened);
         UIPanel.SetActive(isOpened);
-        Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isOpened;
+        //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
+        //Cursor.visible = isOpened;
 
         quickSlots.SetActive(IsChestOpened ? !isOpened : true);
         inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
@@ -96,6 +105,27 @@ public class InventoryManager : MonoBehaviour
 
     private void AddItem(ItemScriptableObject item, int amount)
     {
+        foreach (InventorySlot slot in quickInventorySlots)
+        {
+            if (slot.isEmpty)
+            {
+                slot.PlaceItem(item, amount);
+                return;
+            }
+
+            if (slot.Item == item && slot.Amount < item.maximumAmount)
+            {
+                if (slot.Amount + amount <= item.maximumAmount)
+                    slot.AddAmount(amount);
+                else
+                {
+                    amount -= item.maximumAmount - slot.Amount;
+                    slot.AddAmount(item.maximumAmount - slot.Amount);
+                    AddItem(item, amount);
+                }
+                return;
+            }
+        }
         foreach (InventorySlot slot in inventorySlots)
         {
             if (slot.isEmpty)
@@ -149,6 +179,11 @@ public class InventoryManager : MonoBehaviour
             }
         }
         return amount;
+    }
+
+    public void TryAddOneItem(ItemScriptableObject item)
+    {
+        AddItem(item, 1);
     }
 
     public int TryAddItemToChest(ItemScriptableObject item, int amount)

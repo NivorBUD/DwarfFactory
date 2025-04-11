@@ -8,11 +8,15 @@ using UnityEngine.UI;
 
 public class QuickslotsInventory : MonoBehaviour
 {
+    public static QuickslotsInventory Instance;
+
     private List<QuickInventorySlot> slots;
     private int currentQuickslotID = 0;
+    private QuickInventorySlot activeSlot;
 
     private void Awake()
     {
+        Instance = this;
         slots = new();
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -35,10 +39,27 @@ public class QuickslotsInventory : MonoBehaviour
 
         CheckNums();
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            // Потом появится использование предметов
+            if (BuildingsGrid.Instance.IsPlacingBuilding)
+            {
+                BuildingsGrid.Instance.StopPlacingBuilding();
+            }
+            else if (activeSlot != null && activeSlot.Slot.Item != null && activeSlot.Slot.Item.itemType == ItemType.Building)
+            {
+                BuildingsGrid.Instance.StartPlacingBuilding(activeSlot.Slot.Item.itemPrefab.GetComponent<Building>());
+            }
         }
+
+        if (BuildingsGrid.Instance.IsPlacingBuilding && activeSlot.Slot.Amount == 0)
+        {
+            BuildingsGrid.Instance.StopPlacingBuilding();
+        }
+    }
+
+    public void RemoveUsedItemFromActiveSlot()
+    {
+        activeSlot.Slot.RemoveAmount(1);
     }
 
     private void CheckNums()
@@ -53,6 +74,7 @@ public class QuickslotsInventory : MonoBehaviour
                 }
                 currentQuickslotID = i;
                 slots[currentQuickslotID].ChangeActive();
+                activeSlot = slots[currentQuickslotID];
             }
         }
     }
@@ -68,6 +90,7 @@ public class QuickslotsInventory : MonoBehaviour
             slots.Count - 1 : currentQuickslotID - 1;
 
         slots[currentQuickslotID].ChangeActive();
+        activeSlot = slots[currentQuickslotID];
     }
 
     private void ScrollUp()
@@ -81,5 +104,6 @@ public class QuickslotsInventory : MonoBehaviour
             0 : currentQuickslotID + 1;
 
         slots[currentQuickslotID].ChangeActive();
+        activeSlot = slots[currentQuickslotID];
     }
 }
