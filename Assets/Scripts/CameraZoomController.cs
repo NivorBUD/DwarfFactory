@@ -54,7 +54,7 @@ public class CameraZoomController : MonoBehaviour
         // Получение значения зума от колеса мыши (scroll.y: положительное для прокрутки вверх, отрицательное для вниз)
         Vector2 input = context.ReadValue<Vector2>();
         zoomInput = input.y;
-        Debug.Log($"Zoom input: {zoomInput} (Source: {context.control.path})");
+
     }
 
     private void Update()
@@ -76,11 +76,5 @@ public class CameraZoomController : MonoBehaviour
         var lens = virtualCamera.Lens;
         lens.OrthographicSize = currentOrthoSize;
         virtualCamera.Lens = lens;
-
-        // Отладка
-        if (Mathf.Abs(currentOrthoSize - targetOrthoSize) > 0.01f)
-        {
-            Debug.Log($"Zooming: Current OrthographicSize = {currentOrthoSize}, Target = {targetOrthoSize}");
-        }
     }
 }
