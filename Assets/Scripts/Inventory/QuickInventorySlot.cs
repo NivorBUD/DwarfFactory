@@ -26,5 +26,10 @@ public class QuickInventorySlot : MonoBehaviour
         {
             Slot.BGImage.color = new Color(1, 1, 1, 1);
         }
+
+        if (BuildingsGrid.Instance.IsPlacingBuilding)
+        {
+            BuildingsGrid.Instance.StopPlacingBuilding();
+        }
     }
 }

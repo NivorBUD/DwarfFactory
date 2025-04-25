@@ -47,7 +47,8 @@ public class BuildingsGrid : MonoBehaviour
                 bool canPlace = CheckToPlaceBuilding(pos);
                 if (canPlace)
                 {
-                    buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
+                    Instantiate(flyingBuilding.gameObject);
+                    //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
                     QuickslotsInventory.Instance.RemoveUsedItemFromActiveSlot();
                 }
