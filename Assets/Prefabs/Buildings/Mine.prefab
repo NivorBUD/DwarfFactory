@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 142370780936127534}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 1, z: -90}
+  m_LocalPosition: {x: 0.5, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1195647045991112335}
   - component: {fileID: 1276880487114467535}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Mine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,5 +132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bb22bf05efa7e24e9abeb99992d9d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: {x: 3, y: 3}
+  Size: {x: 2, y: 2}
   tile: {fileID: 11400000, guid: 5415edfa4ecc1884a919e4a925588d83, type: 2}
+  isCreating: 0

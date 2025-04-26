@@ -4590,7 +4590,7 @@ MonoBehaviour:
         m_MethodName: TryAddOneItem
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 562947a4c5b9f8a47b14c87d17f3295c, type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 2b3075ecc478afe448345db9811600a5, type: 2}
           m_ObjectArgumentAssemblyTypeName: ItemScriptableObject, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -8087,7 +8087,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: House
+  m_text: chest
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

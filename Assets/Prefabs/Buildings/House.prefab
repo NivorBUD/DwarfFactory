@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5544287791377067637}
   - component: {fileID: 21998929643388292}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,3 +134,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: {x: 3, y: 5}
   tile: {fileID: 11400000, guid: 72fe893eabc196b4a8b267adc6afbe77, type: 2}
+  isCreating: 0

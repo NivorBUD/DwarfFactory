@@ -88,7 +88,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     oldSlot.PlaceItem(oldSlot.Item, remained);
                 }
             }
-            InventoryManager.Instance.OpenChest.
+            InventoryManager.Instance.OpenedChest.
                 SetSlots(InventoryManager.Instance.GetChestInventorySlots().ToArray());
         }
     }
@@ -123,7 +123,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
         if (InventoryManager.Instance.IsChestOpened)
         {
-            InventoryManager.Instance.OpenChest.
+            InventoryManager.Instance.OpenedChest.
                 SetSlots(InventoryManager.Instance.GetChestInventorySlots().ToArray());
         }
     }

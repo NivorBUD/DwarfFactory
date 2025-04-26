@@ -10,7 +10,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
     public bool IsChestOpened { get; private set; }
-    public Chest OpenChest { get; private set; }
+    public Chest OpenedChest { get; private set; }
 
     [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
     private List<InventorySlot> inventorySlots, chestInventorySlots, quickInventorySlots;
@@ -95,12 +95,12 @@ public class InventoryManager : MonoBehaviour
         inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
         if (chestInventory.activeSelf)
         {
-            OpenChest.SetSlots(chestInventorySlots.ToArray());
+            OpenedChest.SetSlots(chestInventorySlots.ToArray());
         }
         chestInventory.SetActive(IsChestOpened ? isOpened : false);
         
-        if (OpenChest)
-            OpenChest.SetIsOpen(IsChestOpened);
+        if (OpenedChest)
+            OpenedChest.SetIsOpen(IsChestOpened);
     }
 
     private void AddItem(ItemScriptableObject item, int amount)
@@ -223,7 +223,17 @@ public class InventoryManager : MonoBehaviour
 
     public void GoToTheChest(Chest chest)
     {
-        OpenChest = chest;
+        OpenedChest = chest;
+        for (int i = 0; i < chest.Slots.Length; i++)
+        {
+            chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);
+        }
+        IsChestOpened = true;
+    }
+
+    public void OpenChest(Chest chest)
+    {
+        OpenedChest = chest;
         for (int i = 0; i < chest.Slots.Length; i++)
         {
             chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);

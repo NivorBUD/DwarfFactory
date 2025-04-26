@@ -22,6 +22,22 @@ public class Chest : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                if (hit.collider.gameObject == gameObject)
+                {
+                    inventoryManager.OpenChest(this);
+                }
+            }
+        }
+    }
+
     public void AddItem(ItemScriptableObject item, int amount)
     {
         foreach (ChestSlot slot in Slots)
@@ -56,23 +72,23 @@ public class Chest : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            inventoryManager.GoToTheChest(this);
-            isPlayerNear = true;
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        inventoryManager.GoToTheChest(this);
+    //        isPlayerNear = true;
+    //    }
+    //}
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            inventoryManager.GoAwayFromTheChest();
-            isPlayerNear = false;
-        }
-    }
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        inventoryManager.GoAwayFromTheChest();
+    //        isPlayerNear = false;
+    //    }
+    //}
 
     public void SetSlots(InventorySlot[] newSlots)
     {

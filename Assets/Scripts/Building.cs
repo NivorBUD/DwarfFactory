@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,6 +9,11 @@ public class Building : MonoBehaviour
 
     [SerializeField]
     private Tile tile;
+
+    [SerializeField]
+    private bool isCreating;
+
+    public bool IsCreating() => isCreating;
 
     internal TileBase GetTile()
     {
@@ -24,5 +30,15 @@ public class Building : MonoBehaviour
                 Gizmos.DrawCube(transform.position + new Vector3(x, y, 0), new Vector3(1, 1, 0.1f));
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isCreating)
+        {
+            return;
+        }
+
+
     }
 }
