@@ -101,6 +101,8 @@ public class InventoryManager : MonoBehaviour
         
         if (OpenedChest)
             OpenedChest.SetIsOpen(IsChestOpened);
+
+        IsChestOpened = false;
     }
 
     private void AddItem(ItemScriptableObject item, int amount)
@@ -239,6 +241,10 @@ public class InventoryManager : MonoBehaviour
             chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);
         }
         IsChestOpened = true;
+        if (!isOpened)
+        {
+            CloseOpenInventory();
+        }
     }
 
     public void GoAwayFromTheChest()

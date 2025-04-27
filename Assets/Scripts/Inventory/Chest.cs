@@ -24,16 +24,14 @@ public class Chest : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                if (hit.collider.gameObject == gameObject)
-                {
-                    inventoryManager.OpenChest(this);
-                }
+                inventoryManager.OpenChest(this);
             }
         }
     }
