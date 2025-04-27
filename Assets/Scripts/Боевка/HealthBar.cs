@@ -7,11 +7,11 @@ public class HealthBar : MonoBehaviour
     [Header("UI Компоненты")]
     public Slider slider;         // Компонент Slider для управления заливкой
     public TextMeshProUGUI healthText; // Текст здоровья
-    public float offsetY = 50f;   // Смещение над ботом в пикселях
 
     private Transform target;     // Цель (бот)
     private HealthSystem healthSystem; // Система здоровья
     private RectTransform rectTransform; // RectTransform для позиционирования
+    private float offsetY;        // Смещение над ботом в пикселях
 
     private void Awake()
     {
@@ -19,10 +19,11 @@ public class HealthBar : MonoBehaviour
         slider = GetComponent<Slider>();
     }
 
-    public void SetTarget(Transform targetTransform, HealthSystem health)
+    public void SetTarget(Transform targetTransform, HealthSystem health, float offset)
     {
         target = targetTransform;
         healthSystem = health;
+        offsetY = offset;
 
         if (healthSystem != null && slider != null)
         {
@@ -50,7 +51,7 @@ public class HealthBar : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); // Уничтожаем HealthBar, если healthSystem null
+            Destroy(gameObject);
         }
     }
 
@@ -75,7 +76,6 @@ public class HealthBar : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Уничтожаем HealthBar, если объект всё ещё существует
         if (gameObject != null)
         {
             Destroy(gameObject);

@@ -12,9 +12,11 @@ public class HealthSystem : MonoBehaviour
 
     [Header("UI")]
     public GameObject healthBarPrefab; // ѕрефаб полосы здоровь€
+    public float healthBarOffsetY = 50f; // —мещение полосы здоровь€ над ботом
 
     private HealthBar healthBar;      // Ёкземпл€р полосы здоровь€
 
+    [System.Obsolete]
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -29,7 +31,7 @@ public class HealthSystem : MonoBehaviour
                 healthBar = hb.GetComponent<HealthBar>();
                 if (healthBar != null)
                 {
-                    healthBar.SetTarget(transform, this);
+                    healthBar.SetTarget(transform, this, healthBarOffsetY);
                 }
             }
         }

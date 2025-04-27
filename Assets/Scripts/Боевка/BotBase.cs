@@ -1,108 +1,168 @@
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(HealthSystem))]
 public abstract class BotBase : MonoBehaviour
 {
-    [Header("Параметры бота")]
-    public float moveSpeed = 3f;
+    public enum State { Wander, Chase, Attack }
+    public State currentState;
+
+    [Header("Movement")]
+    public float detectionRadius = 10f;
     public float attackRange = 1.5f;
+    public float stuckCheckInterval = 1f;
+    public float stuckMoveDistance = 0.5f;
+
+    [Header("Attack")]
     public float attackCooldown = 1f;
-    public int attackDamage = 10;
 
-    [Header("Поиск цели")]
-    public float detectionRadius = 10f; // Радиус поиска врага
-
-    protected Transform targetEnemy;
-    protected Rigidbody2D rb;
     protected HealthSystem healthSystem;
+    protected NavMeshAgent agent;
+    protected Transform target;
+    protected float lastAttackTime;
 
-    private float lastAttackTime;
-
-    // Для хаотичного блуждания
-    private Vector2 wanderDirection;
-    private float wanderChangeTime;
+    Vector3 lastPosition;
+    float stuckTimer;
 
     protected virtual void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         healthSystem = GetComponent<HealthSystem>();
+        agent = GetComponent<NavMeshAgent>();
+
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
     }
 
     protected virtual void Update()
     {
-        if (healthSystem == null || healthSystem.IsDead())
-            return;
-
-        FindNearestTarget();
-
-        if (targetEnemy != null)
+        if (healthSystem.IsDead())
         {
-            MoveLogic();
-            TryAttack();
+            agent.isStopped = true;
+            return;
+        }
+
+        FindOrUpdateTarget();
+
+        if (target == null)
+        {
+            currentState = State.Wander;
+            Wander();
         }
         else
         {
-            Wander();
+            float distance = Vector2.Distance(transform.position, target.position);
+            currentState = (distance <= attackRange) ? State.Attack : State.Chase;
         }
+
+        switch (currentState)
+        {
+            case State.Wander:
+                Wander();
+                break;
+            case State.Chase:
+                Chase();
+                break;
+            case State.Attack:
+                TryAttack();
+                break;
+        }
+
+        CheckIfStuck();
     }
 
-    protected abstract void MoveLogic(); // Потомки реализуют
-    protected abstract void Attack();    // Потомки реализуют
-
-    protected virtual void TryAttack()
+    protected virtual void FindOrUpdateTarget()
     {
-        if (targetEnemy == null)
+        if (target != null && Vector2.Distance(transform.position, target.position) <= detectionRadius)
             return;
 
-        float distance = Vector2.Distance(transform.position, targetEnemy.position);
-        if (distance <= attackRange && Time.time >= lastAttackTime + attackCooldown)
-        {
-            lastAttackTime = Time.time;
-            Attack();
-        }
-    }
+        HealthSystem[] allUnits = FindObjectsOfType<HealthSystem>();
+        Transform closest = null;
+        float closestDistance = detectionRadius;
 
-    protected virtual void FindNearestTarget()
-    {
-        HealthSystem[] allTargets = GameObject.FindObjectsOfType<HealthSystem>();
-        float closestDistance = Mathf.Infinity;
-        Transform closestTarget = null;
-
-        foreach (var target in allTargets)
+        foreach (var unit in allUnits)
         {
-            if (target == null || target == healthSystem || target.IsDead())
+            if (unit == healthSystem || unit.IsDead() || unit.myType != healthSystem.targetType)
                 continue;
 
-            if (target.myType == healthSystem.myType) // Свои - пропускаем
-                continue;
-
-            if (targetTypeMatch(target))
+            float dist = Vector2.Distance(transform.position, unit.transform.position);
+            if (dist < closestDistance)
             {
-                float dist = Vector2.Distance(transform.position, target.transform.position);
-                if (dist < detectionRadius && dist < closestDistance) // <<< Условие по радиусу
-                {
-                    closestDistance = dist;
-                    closestTarget = target.transform;
-                }
+                closest = unit.transform;
+                closestDistance = dist;
             }
         }
 
-        targetEnemy = closestTarget;
+        target = closest;
     }
-
-    protected virtual bool targetTypeMatch(HealthSystem target)
-    {
-        return healthSystem.targetType == target.myType;
-    }
-
 
     protected virtual void Wander()
     {
-        if (Time.time > wanderChangeTime)
-        {
-            wanderDirection = Random.insideUnitCircle.normalized;
-            wanderChangeTime = Time.time + Random.Range(1f, 3f);
-        }
+        if (agent.hasPath) return;
 
-        rb.MovePosition(rb.position + wanderDirection * moveSpeed * 0.3f * Time.deltaTime);
+        Vector2 randomPoint = Random.insideUnitCircle * (detectionRadius * 0.5f);
+        Vector3 destination = (Vector2)transform.position + randomPoint;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(destination, out hit, 1f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
     }
+
+    protected virtual void Chase()
+    {
+        if (target != null)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(target.position);
+        }
+    }
+
+    protected virtual void TryAttack()
+    {
+        agent.isStopped = true;
+
+        if (Time.time >= lastAttackTime + attackCooldown)
+        {
+            lastAttackTime = Time.time;
+            AttackLogic();
+        }
+    }
+
+    protected abstract void AttackLogic();
+
+    // Антизастревание
+    void CheckIfStuck()
+    {
+        stuckTimer += Time.deltaTime;
+        if (stuckTimer >= stuckCheckInterval)
+        {
+            float moved = Vector2.Distance(transform.position, lastPosition);
+            if (moved < 0.1f && !agent.pathPending)
+            {
+                ForceMoveAway();
+            }
+            lastPosition = transform.position;
+            stuckTimer = 0f;
+        }
+    }
+
+    void ForceMoveAway()
+    {
+        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+        Vector3 destination = (Vector2)transform.position + randomDirection * stuckMoveDistance;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(destination, out hit, 1f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+    }
+
+    protected virtual void OnTargetKilled()
+    {
+        target = null;
+        currentState = State.Wander;
+        agent.isStopped = false;
+    }
+
 }

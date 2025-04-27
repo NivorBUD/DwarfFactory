@@ -2,30 +2,29 @@ using UnityEngine;
 
 public class MeleeBot : BotBase
 {
-    protected override void MoveLogic()
+    [Header("Melee Specific")]
+    public int attackDamage = 10;
+    public float pushBackForce = 0.5f;
+
+    protected override void AttackLogic()
     {
-        if (targetEnemy == null)
-            return;
-
-        float distance = Vector2.Distance(transform.position, targetEnemy.position);
-
-        if (distance > attackRange * 0.8f)
+        if (target == null) return;
+        var h = target.GetComponent<HealthSystem>();
+        if (h != null)
         {
-            Vector2 direction = ((Vector2)targetEnemy.position - rb.position).normalized;
-            rb.MovePosition(rb.position + direction * moveSpeed * Time.deltaTime);
+            h.TakeDamage(attackDamage);
+
+            if (h.IsDead())
+            {
+                OnTargetKilled();
+            }
+            else
+            {
+                // Пушбек только если жив
+                Vector2 away = ((Vector2)transform.position - (Vector2)target.position).normalized;
+                transform.position += (Vector3)(away * pushBackForce);
+            }
         }
     }
 
-    protected override void Attack()
-    {
-        if (targetEnemy == null)
-            return;
-
-        HealthSystem enemyHealth = targetEnemy.GetComponent<HealthSystem>();
-        if (enemyHealth != null)
-        {
-            enemyHealth.TakeDamage(attackDamage);
-            // Тут можно добавить анимацию удара или эффект удара
-        }
-    }
 }

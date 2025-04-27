@@ -5,16 +5,18 @@ TagManager:
   serializedVersion: 3
   tags:
   - Canvas
+  - Obstacle
+  - Wall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Obstacle
   - Water
   - UI
   - Unwalkable
   - Bots
-  - Enemies
+  - 
   - 
   - 
   - 
