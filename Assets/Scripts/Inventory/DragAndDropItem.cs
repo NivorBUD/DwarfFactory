@@ -26,7 +26,9 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         if (oldSlot.isEmpty)
             return;
-        GetComponent<RectTransform>().position += new Vector3(eventData.delta.x, eventData.delta.y);
+        //GetComponent<RectTransform>().position += new Vector3(eventData.delta.x / 100, eventData.delta.y / 100);
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        GetComponent<RectTransform>().position = new Vector3(pos.x, pos.y);
     }
 
     public void OnPointerDown(PointerEventData eventData)
