@@ -6,6 +6,9 @@ using UnityEngine.Tilemaps;
 
 public class BuildingsGrid : MonoBehaviour
 {
+    public static BuildingsGrid Instance;
+    public bool IsPlacingBuilding { get; private set; }
+
     [SerializeField]
     private Tilemap buildingsTilemap;
 
@@ -18,6 +21,7 @@ public class BuildingsGrid : MonoBehaviour
     {
         cam = Camera.main;
         grid = GetComponent<Grid>();
+        Instance = this;
     }
 
     public void StartPlacingBuilding(Building buildingPrefab)
@@ -28,6 +32,7 @@ public class BuildingsGrid : MonoBehaviour
         }
 
         flyingBuilding = Instantiate(buildingPrefab);
+        IsPlacingBuilding = true;
     }
 
     private void Update()
@@ -40,20 +45,21 @@ public class BuildingsGrid : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Mouse0))
             { 
                 bool canPlace = CheckToPlaceBuilding(pos);
-                Debug.Log(canPlace);
                 if (canPlace)
                 {
-                    buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
+                    Instantiate(flyingBuilding.gameObject);
+                    //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
-                    StopPlacingBuilding();
+                    QuickslotsInventory.Instance.RemoveUsedItemFromActiveSlot();
                 }
             }
         }
     }
 
-    private void StopPlacingBuilding()
+    public void StopPlacingBuilding()
     {
         Destroy(flyingBuilding.gameObject);
+        IsPlacingBuilding = false;
     }
 
     private bool CheckToPlaceBuilding(Vector3Int gridPlace)
