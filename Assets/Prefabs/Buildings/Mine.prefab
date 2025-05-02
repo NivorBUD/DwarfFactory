@@ -96,7 +96,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1195647045991112335}
-  - component: {fileID: 1276880487114467535}
+  - component: {fileID: 9039854942488732469}
   m_Layer: 0
   m_Name: Mine
   m_TagString: Untagged
@@ -120,7 +120,7 @@ Transform:
   - {fileID: 4782086171239819549}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1276880487114467535
+--- !u!114 &9039854942488732469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,9 +129,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3084618554523843948}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bb22bf05efa7e24e9abeb99992d9d35, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d39b7ca178841848bab25d7ee1e6e15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Size: {x: 2, y: 2}
-  tile: {fileID: 11400000, guid: 5415edfa4ecc1884a919e4a925588d83, type: 2}
-  isCreating: 0

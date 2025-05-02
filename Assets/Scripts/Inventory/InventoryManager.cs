@@ -223,6 +223,52 @@ public class InventoryManager : MonoBehaviour
         return amount;
     }
 
+    public int CountItem(ItemScriptableObject item)
+    {
+        int count = 0;
+
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.Item == item)
+                count += slot.Amount;
+        }
+
+        foreach (var slot in quickInventorySlots)
+        {
+            if (slot.Item == item)
+                count += slot.Amount;
+        }
+
+        return count;
+    }
+
+    public void RemoveItems(ItemScriptableObject item, int amount)
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (amount <= 0) break;
+
+            if (slot.Item == item)
+            {
+                int removeAmount = Mathf.Min(slot.Amount, amount);
+                slot.RemoveAmount(removeAmount);
+                amount -= removeAmount;
+            }
+        }
+
+        foreach (var slot in quickInventorySlots)
+        {
+            if (amount <= 0) break;
+
+            if (slot.Item == item)
+            {
+                int removeAmount = Mathf.Min(slot.Amount, amount);
+                slot.RemoveAmount(removeAmount);
+                amount -= removeAmount;
+            }
+        }
+    }
+
     public void GoToTheChest(Chest chest)
     {
         OpenedChest = chest;
