@@ -3,16 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Canvas
+  - Obstacle
+  - Wall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Obstacle
   - Water
   - UI
   - Unwalkable
-  - Player
+  - Bots
   - 
   - 
   - 
@@ -46,9 +49,6 @@ TagManager:
     locked: 0
   - name: Process Building
     uniqueID: 3427344733
-    locked: 0
-  - name: UI
-    uniqueID: 1424646803
     locked: 0
   m_RenderingLayers:
   - Default
