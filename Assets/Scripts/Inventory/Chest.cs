@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
-public class Chest : MonoBehaviour
+public class Chest : Building
 {
     public ChestSlot[] Slots { get; private set; }
 
@@ -99,5 +99,10 @@ public class Chest : MonoBehaviour
     public void SetIsOpen(bool newValue)
     {
         isOpen = newValue;
+    }
+
+    public override void interaction()
+    {
+        inventoryManager.OpenChest(this);
     }
 }

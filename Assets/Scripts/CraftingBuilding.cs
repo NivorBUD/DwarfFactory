@@ -52,4 +52,9 @@ public class CraftingBuilding : Building
         }
         return true;
     }
+
+    public override void interaction()
+    {
+        
+    }
 }

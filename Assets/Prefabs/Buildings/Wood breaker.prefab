@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Size: {x: 2, y: 2}
-  AvailableCrafts: []
+  AvailableCrafts:
+  - {fileID: 11400000, guid: 6f45103ca43b5d24492f78490df1828b, type: 2}
 --- !u!1 &7664772529822768022
 GameObject:
   m_ObjectHideFlags: 0
