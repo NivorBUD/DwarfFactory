@@ -11,6 +11,8 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance { get; private set; }
     public bool IsChestOpened { get; private set; }
     public Chest OpenedChest { get; private set; }
+    [SerializeField] private GameObject closeButton;
+    [SerializeField] private GameObject craftingPanel;
 
     [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
     private List<InventorySlot> inventorySlots, chestInventorySlots, quickInventorySlots;
@@ -30,6 +32,8 @@ public class InventoryManager : MonoBehaviour
         inventory.SetActive(false);
         chestInventory.SetActive(false);
         UIPanel.SetActive(false);
+        closeButton.SetActive(false);
+        craftingPanel.SetActive(false);
 
         InitializeSlots();
     }
@@ -88,11 +92,13 @@ public class InventoryManager : MonoBehaviour
         isOpened = !isOpened;
         inventory.SetActive(isOpened);
         UIPanel.SetActive(isOpened);
+        closeButton.SetActive(isOpened);
+        craftingPanel.SetActive(isOpened);
         //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
         //Cursor.visible = isOpened;
 
         quickSlots.SetActive(IsChestOpened ? !isOpened : true);
-        inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
+        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
         if (chestInventory.activeSelf)
         {
             OpenedChest.SetSlots(chestInventorySlots.ToArray());
@@ -191,7 +197,7 @@ public class InventoryManager : MonoBehaviour
     public int TryAddItemToChest(ItemScriptableObject item, int amount)
     {
         if (!IsChestOpened)
-            throw new Exception("Сундук не открыт");
+            throw new Exception("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
 
         foreach (InventorySlot slot in chestInventorySlots)
         {

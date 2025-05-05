@@ -28,7 +28,7 @@ public class Building : MonoBehaviour
 
             if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                inventoryManager.OpenChest(this);
+                InventoryManager.Instance.OpenChest(GetComponent<Chest>());
             }
         }
     }
