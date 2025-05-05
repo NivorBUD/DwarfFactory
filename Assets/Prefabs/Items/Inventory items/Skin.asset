@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4a53a3d8a91fd45ba75122685df45e, type: 3}
   m_Name: Skin
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: "\u0428\u043A\u0443\u0440\u0430"
   itemDescription: 
-  maximumAmount: 0
+  maximumAmount: 100
   itemType: 0
   itemPrefab: {fileID: 0}
   icon: {fileID: 0}

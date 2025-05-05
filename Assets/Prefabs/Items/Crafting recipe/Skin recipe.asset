@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Skin recipe
   m_EditorClassIdentifier: 
   ingredients: []
-  resultItem: {fileID: 0}
+  resultItem: {fileID: 11400000, guid: de418e800bf8df64f956e551bdf1c1b4, type: 2}
   resultAmount: 1
-  craftingTime: 1
+  craftingTime: 5

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42fd3dc11f02e924c8da9cd7cc62ef16, type: 3}
   m_Name: Leather recipe
   m_EditorClassIdentifier: 
-  ingredients: []
+  ingredients:
+  - item: {fileID: 11400000, guid: de418e800bf8df64f956e551bdf1c1b4, type: 2}
+    amount: 2
   resultItem: {fileID: 11400000, guid: 96143317fe790c142ac2757139e623b3, type: 2}
   resultAmount: 1
   craftingTime: 5
