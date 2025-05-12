@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 21260be31485c5645997bf86e4c9dbec
+guid: cfcb644b767250a4c942f017b2877422
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7132172409892320828
-    second: Archer_0
+      213: 1428892310142603471
+    second: Backpack_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Archer_0
+      name: Backpack_0
       rect:
         serializedVersion: 2
-        x: 183
-        y: 103
-        width: 698
-        height: 813
+        x: 0
+        y: 0
+        width: 99
+        height: 102
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4c9c6872bfe650d90800000000000000
-      internalID: -7132172409892320828
+      spriteID: fc056584cf174d310800000000000000
+      internalID: 1428892310142603471
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Archer_0: -7132172409892320828
+      Backpack_0: 1428892310142603471
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
