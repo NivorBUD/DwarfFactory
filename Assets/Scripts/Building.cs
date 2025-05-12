@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class Building : MonoBehaviour
+abstract public class Building : MonoBehaviour
 {
     public Vector2Int Size = Vector2Int.one;
 
@@ -28,8 +28,10 @@ public class Building : MonoBehaviour
 
             if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                InventoryManager.Instance.OpenChest(GetComponent<Chest>());
+                
             }
         }
     }
+
+    abstract public void interaction();
 }

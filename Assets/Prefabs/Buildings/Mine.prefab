@@ -133,4 +133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Size: {x: 2, y: 2}
-  AvailableCrafts: []
+  AvailableCrafts:
+  - {fileID: 11400000, guid: d05d6fbe3bceae14da557a451e58f05e, type: 2}
+  - {fileID: 11400000, guid: 2151876da2f6d344091c578f806ad24b, type: 2}
+  - {fileID: 11400000, guid: 92f4032df75dab341aa2a35ebbdbc995, type: 2}
+  - {fileID: 11400000, guid: 070a7500af05fb841bd8fe1ce834acfc, type: 2}
