@@ -308,4 +308,13 @@ public class InventoryManager : MonoBehaviour
     {
         return chestInventorySlots;
     }
+    
+        public void CloseInventoryFromButton()
+    {
+        if (isOpened)
+        {
+            CloseOpenInventory();
+        }
+    }
 }
+
