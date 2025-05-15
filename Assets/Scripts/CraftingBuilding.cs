@@ -55,6 +55,13 @@ public class CraftingBuilding : Building
 
     public override void interaction()
     {
-        
+        setCrafts();
+    }
+
+    private void setCrafts()
+    {
+        foreach (CraftingRecipe recipe in AvailableCrafts) {
+
+        }
     }
 }

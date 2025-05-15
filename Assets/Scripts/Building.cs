@@ -28,7 +28,7 @@ abstract public class Building : MonoBehaviour
 
             if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                
+                interaction();
             }
         }
     }
