@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3632909458b85384aae03042ef3b3162
+guid: eb0cc8ecbac014e008f8df272ea929e2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1554214871758326463
-    second: Smelter_0
+      213: 1518363075290452430
+    second: Weapon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Smelter_0
+      name: Weapon_0
       rect:
         serializedVersion: 2
-        x: 25
-        y: 9
-        width: 270
-        height: 239
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 14537380fc15e6ae0800000000000000
-      internalID: -1554214871758326463
+      spriteID: ec1d1ce1c2f421510800000000000000
+      internalID: 1518363075290452430
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Smelter_0: -1554214871758326463
+      Weapon_0: 1518363075290452430
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

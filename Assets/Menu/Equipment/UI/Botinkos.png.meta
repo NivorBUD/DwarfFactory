@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3632909458b85384aae03042ef3b3162
+guid: a71892e315be94eb4aa4b9484224ac16
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1554214871758326463
-    second: Smelter_0
+      213: 3807468647276301396
+    second: Botinkos_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Smelter_0
+      name: Botinkos_0
       rect:
         serializedVersion: 2
-        x: 25
-        y: 9
-        width: 270
-        height: 239
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 14537380fc15e6ae0800000000000000
-      internalID: -1554214871758326463
+      spriteID: 45c4756df88d6d430800000000000000
+      internalID: 3807468647276301396
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Smelter_0: -1554214871758326463
+      Botinkos_0: 3807468647276301396
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
