@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class BuildingInventory
 {
-    public List<InventorySlot> slots;
+    public List<SpecificItemSlot> slots;
+    public InventorySlot resultSlot;
 
     public int CountItem(ItemScriptableObject item)
     {

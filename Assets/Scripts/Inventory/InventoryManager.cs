@@ -11,6 +11,7 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance { get; private set; }
     public bool IsChestOpened { get; private set; }
     public Chest OpenedChest { get; private set; }
+    public CraftingBuilding OpenedCraftingBuilding { get; private set; }
     [SerializeField] private GameObject closeButton;
     [SerializeField] private GameObject craftingPanel;
 
@@ -196,9 +197,6 @@ public class InventoryManager : MonoBehaviour
 
     public int TryAddItemToChest(ItemScriptableObject item, int amount)
     {
-        if (!IsChestOpened)
-            throw new Exception("������ �� ������");
-
         foreach (InventorySlot slot in chestInventorySlots)
         {
             if (amount == 0)
@@ -299,6 +297,12 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void OpenCraftingBuilding(CraftingBuilding building)
+    {
+        OpenedCraftingBuilding = building;
+
+    }
+
     public void GoAwayFromTheChest()
     {
         IsChestOpened = false;
@@ -309,7 +313,7 @@ public class InventoryManager : MonoBehaviour
         return chestInventorySlots;
     }
     
-        public void CloseInventoryFromButton()
+    public void CloseInventoryFromButton()
     {
         if (isOpened)
         {

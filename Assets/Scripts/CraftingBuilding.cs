@@ -1,8 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CraftingBuildingType
+{
+    Mine,
+    Smeltery,
+    Taanning,
+    Workshop,
+    WoodBreaker
+}
+
 public class CraftingBuilding : Building
 {
+    public CraftingBuildingType Type;
     public List<CraftingRecipe> AvailableCrafts;
     public BuildingInventory buildingInventory;
     private Queue<CraftingRecipe> jobQueue = new();
@@ -37,7 +47,7 @@ public class CraftingBuilding : Building
 
             yield return new WaitForSeconds(recipe.craftingTime);
 
-            InventoryManager.Instance.TryAddItem(recipe.resultItem, recipe.resultAmount);
+            buildingInventory.resultSlot.PlaceItem(recipe.resultItem, recipe.resultAmount);
             Debug.Log($"Закончен крафт: {recipe.resultItem.name}");
         }
         isCrafting = false;

@@ -1,8 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class CraftingSystem : MonoBehaviour
 {
     public static CraftingSystem Instance;
+
+    //[SerializeField] private List<CraftingSlot> CraftingSlots;
 
     private void Awake()
     {
@@ -18,6 +21,8 @@ public class CraftingSystem : MonoBehaviour
         {
             InventoryManager.Instance.RemoveItems(ingredient.item, ingredient.amount);
         }
+
+        //CalculateMaxInventoryCrafts();
 
         InventoryManager.Instance.TryAddItem(recipe.resultItem, recipe.resultAmount);
         return true;
@@ -36,7 +41,7 @@ public class CraftingSystem : MonoBehaviour
 
     public int CalculateMaxCrafts(CraftingRecipe recipe)
     {
-        int maxCrafts = int.MaxValue;
+        int maxCrafts = -1;
         foreach (var ingredient in recipe.ingredients)
         {
             int playerAmount = InventoryManager.Instance.CountItem(ingredient.item);
@@ -46,4 +51,12 @@ public class CraftingSystem : MonoBehaviour
         }
         return maxCrafts;
     }
+
+    //public void CalculateMaxInventoryCrafts()
+    //{
+    //    foreach (CraftingSlot slot in CraftingSlots) 
+    //    {
+    //        slot.RefreshAmountText();
+    //    }
+    //}
 }

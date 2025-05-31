@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = currentVelocity;
 
         // Анимация
-        animator.SetFloat("Speed", currentVelocity.magnitude);
+        //animator.SetFloat("Speed", currentVelocity.magnitude);
 
         // Поворот персонажа по X
         if (moveInput.x > 0.01f)
