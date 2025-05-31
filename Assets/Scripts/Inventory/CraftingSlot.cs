@@ -82,15 +82,13 @@ public class CraftingSlot : MonoBehaviour, IPointerClickHandler
         if (maxCrafts == 0)
             return;
 
-        StartCoroutine(CraftCoroutine());
+        Craft();
     }
 
-    private IEnumerator CraftCoroutine()
+    private void Craft()
     {
         isCrafting = true;
         // Можно тут включить прогресс-бар/анимацию
-
-        yield return new WaitForSeconds(Recipe.craftingTime);
 
         bool ok = CraftingSystem.Instance.Craft(Recipe);
         if (!ok)
@@ -98,6 +96,5 @@ public class CraftingSlot : MonoBehaviour, IPointerClickHandler
 
         isCrafting = false;
         RefreshAmountText();
-        //CraftingSystem.Instance.CalculateMaxInventoryCrafts();
     }
 }

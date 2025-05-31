@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class CraftingSystem : MonoBehaviour
 {
     public static CraftingSystem Instance;
 
-    //[SerializeField] private List<CraftingSlot> CraftingSlots;
+    [SerializeField] private List<CraftingSlot> CraftingSlots;
 
     private void Awake()
     {
@@ -17,15 +18,25 @@ public class CraftingSystem : MonoBehaviour
         if (!HasRequiredItems(recipe))
             return false;
 
+        StartCoroutine(CraftDelay(recipe));
+
+        
+        return true;
+    }
+
+    private IEnumerator CraftDelay(CraftingRecipe recipe)
+    {
         foreach (var ingredient in recipe.ingredients)
         {
             InventoryManager.Instance.RemoveItems(ingredient.item, ingredient.amount);
         }
 
-        //CalculateMaxInventoryCrafts();
+        CalculateMaxInventoryCrafts();
+
+        yield return new WaitForSeconds(recipe.craftingTime);
 
         InventoryManager.Instance.TryAddItem(recipe.resultItem, recipe.resultAmount);
-        return true;
+        CalculateMaxInventoryCrafts();
     }
 
     private bool HasRequiredItems(CraftingRecipe recipe)
@@ -46,17 +57,17 @@ public class CraftingSystem : MonoBehaviour
         {
             int playerAmount = InventoryManager.Instance.CountItem(ingredient.item);
             int craftsForThisItem = playerAmount / ingredient.amount;
-            if (craftsForThisItem < maxCrafts)
+            if (craftsForThisItem < maxCrafts || maxCrafts == -1)
                 maxCrafts = craftsForThisItem;
         }
         return maxCrafts;
     }
 
-    //public void CalculateMaxInventoryCrafts()
-    //{
-    //    foreach (CraftingSlot slot in CraftingSlots) 
-    //    {
-    //        slot.RefreshAmountText();
-    //    }
-    //}
+    public void CalculateMaxInventoryCrafts()
+    {
+        foreach (CraftingSlot slot in CraftingSlots)
+        {
+            slot.RefreshAmountText();
+        }
+    }
 }

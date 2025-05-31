@@ -33,7 +33,7 @@ public class CraftingBuilding : Building
         }
         else
         {
-            Debug.Log("Недостаточно ресурсов в здании для крафта.");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
         }
     }
 
@@ -43,12 +43,12 @@ public class CraftingBuilding : Building
         while (jobQueue.Count > 0)
         {
             var recipe = jobQueue.Dequeue();
-            Debug.Log($"Начинается крафт: {recipe.resultItem.name}");
+            Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: {recipe.resultItem.name}");
 
             yield return new WaitForSeconds(recipe.craftingTime);
 
             buildingInventory.resultSlot.PlaceItem(recipe.resultItem, recipe.resultAmount);
-            Debug.Log($"Закончен крафт: {recipe.resultItem.name}");
+            Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: {recipe.resultItem.name}");
         }
         isCrafting = false;
     }
