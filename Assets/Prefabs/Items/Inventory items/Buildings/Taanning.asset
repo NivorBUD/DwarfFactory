@@ -15,6 +15,6 @@ MonoBehaviour:
   itemName: "\u0414\u0443\u0431\u0438\u043B\u044C\u043D\u044F"
   itemDescription: 
   maximumAmount: 100
-  itemType: 0
+  itemType: 1
   itemPrefab: {fileID: 2036754880767154416, guid: ab8eb0f9025f87d4aa07c0d15c80085d, type: 3}
   icon: {fileID: 21300000, guid: 0861b88a00ae90f4f9ba2d4932a92b19, type: 3}
