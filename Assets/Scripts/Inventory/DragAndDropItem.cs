@@ -68,7 +68,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             if (oldSlot.gameObject.GetComponent<ChestSlot>() != null)
             {
-                int remained = InventoryManager.Instance.TryAddItem(oldSlot.Item, oldSlot.Amount);
+                int remained = InventoryManager.Instance.AddItem(oldSlot.Item, oldSlot.Amount);
                 if (remained == 0)
                 {
                     oldSlot.ResetData();
@@ -80,7 +80,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             }
             else
             {
-                int remained = InventoryManager.Instance.TryAddItemToChest(oldSlot.Item, oldSlot.Amount);
+                int remained = InventoryManager.Instance.TryAddToChest(oldSlot.Item, oldSlot.Amount);
                 if (remained == 0)
                 {
                     oldSlot.ResetData();

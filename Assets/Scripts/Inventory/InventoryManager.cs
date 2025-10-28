@@ -16,6 +16,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject craftingPanel;
 
     [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
+    public InventoryUI ui;
     private List<InventorySlot> inventorySlots, chestInventorySlots, quickInventorySlots;
 
     private bool isOpened;
@@ -30,36 +31,23 @@ public class InventoryManager : MonoBehaviour
         Instance = this;
         mainCamera = Camera.main;
 
-        inventory.SetActive(false);
-        chestInventory.SetActive(false);
-        UIPanel.SetActive(false);
-        closeButton.SetActive(false);
-        craftingPanel.SetActive(false);
-
         InitializeSlots();
     }
 
     private void InitializeSlots()
     {
-        for (int i = 0; i < inventory.transform.childCount; i++)
+        FillSlotList(inventory, inventorySlots);
+        FillSlotList(chestInventory, chestInventorySlots);
+        FillSlotList(quickSlots, quickInventorySlots);
+    }
+
+    private void FillSlotList(GameObject parent, List<InventorySlot> slotList)
+    {
+        for (int i = 0; i < parent.transform.childCount; i++)
         {
-            if (inventory.transform.GetChild(i).GetComponent<InventorySlot>() != null)
+            if (parent.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
             {
-                inventorySlots.Add(inventory.transform.GetChild(i).GetComponent<InventorySlot>());
-            }
-        }
-        for (int i = 0; i < chestInventory.transform.childCount; i++)
-        {
-            if (chestInventory.transform.GetChild(i).GetComponent<InventorySlot>() != null)
-            {
-                chestInventorySlots.Add(chestInventory.transform.GetChild(i).GetComponent<InventorySlot>());
-            }
-        }
-        for (int i = 0; i < quickSlots.transform.childCount; i++)
-        {
-            if (quickSlots.transform.GetChild(i).GetComponent<InventorySlot>() != null)
-            {
-                quickInventorySlots.Add(quickSlots.transform.GetChild(i).GetComponent<InventorySlot>());
+                slotList.Add(slot);
             }
         }
     }
@@ -67,29 +55,17 @@ public class InventoryManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
-            CloseOpenInventory();
+        {
+            ui.ToggleInventory();
+        }
+            
 
         //if (Input.GetMouseButtonDown(0))
         //    TryToGetItem();
     }
 
-    private void TryToGetItem()
-    {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, reachDistance))
-        {
-            Item item = hit.collider.gameObject.GetComponent<Item>();
-            if (item != null)
-            {
-                AddItem(item.item, item.amount);
-                Destroy(item.gameObject);
-            }
-        }
-    }
-
     private void CloseOpenInventory()
-    {
+    {  
         isOpened = !isOpened;
         inventory.SetActive(isOpened);
         UIPanel.SetActive(isOpened);
@@ -112,90 +88,54 @@ public class InventoryManager : MonoBehaviour
         IsChestOpened = false;
     }
 
-    private void AddItem(ItemScriptableObject item, int amount)
+    public void AddOneItem(ItemScriptableObject item)
     {
-        foreach (InventorySlot slot in quickInventorySlots)
-        {
-            if (slot.isEmpty)
-            {
-                slot.PlaceItem(item, amount);
-                return;
-            }
+        int amount = 1;
+        TryAddToSlots(quickInventorySlots, item, ref amount);
+        TryAddToSlots(inventorySlots, item, ref amount);
+    }
 
-            if (slot.Item == item && slot.Amount < item.maximumAmount)
+    public int AddItem(ItemScriptableObject item, int amount)
+    {
+        if (amount <= 0) return 0;
+
+        TryAddToSlots(quickInventorySlots, item, ref amount);
+        TryAddToSlots(inventorySlots, item, ref amount);
+
+        return amount; // остаток, если не хватило места
+    }
+
+    private void TryAddToSlots(List<InventorySlot> slots, ItemScriptableObject item, ref int amount)
+    {
+        // ƒобавл€ем в существующие стаки
+        foreach (var slot in slots)
+        {
+            if (amount <= 0) return;
+
+            if (!slot.isEmpty && slot.Item == item && slot.Amount < item.maximumAmount)
             {
-                if (slot.Amount + amount <= item.maximumAmount)
-                    slot.AddAmount(amount);
-                else
-                {
-                    amount -= item.maximumAmount - slot.Amount;
-                    slot.AddAmount(item.maximumAmount - slot.Amount);
-                    AddItem(item, amount);
-                }
-                return;
+                int space = item.maximumAmount - slot.Amount;
+                int addAmount = Mathf.Min(amount, space);
+                slot.AddAmount(addAmount);
+                amount -= addAmount;
             }
         }
-        foreach (InventorySlot slot in inventorySlots)
+
+        // ƒобавл€ем в пустые слоты
+        foreach (var slot in slots)
         {
+            if (amount <= 0) return;
+
             if (slot.isEmpty)
             {
-                slot.PlaceItem(item, amount);
-                return;
-            }
-
-            if (slot.Item == item && slot.Amount < item.maximumAmount)
-            {
-                if (slot.Amount + amount <= item.maximumAmount)
-                    slot.AddAmount(amount);
-                else
-                {
-                    amount -= item.maximumAmount - slot.Amount;
-                    slot.AddAmount(item.maximumAmount - slot.Amount);
-                    AddItem(item, amount);
-                }
-                return;
+                int placeAmount = Mathf.Min(amount, item.maximumAmount);
+                slot.PlaceItem(item, placeAmount);
+                amount -= placeAmount;
             }
         }
     }
 
-    public int TryAddItem(ItemScriptableObject item, int amount)
-    {
-        foreach (InventorySlot slot in inventorySlots)
-        {
-            if (amount == 0)
-            {
-                return 0;
-            }
-
-            if (slot.isEmpty)
-            {
-                slot.PlaceItem(item, amount);
-                return 0;
-            }
-
-            if (slot.Item == item && slot.Amount < item.maximumAmount)
-            {
-                if (slot.Amount + amount <= item.maximumAmount)
-                {
-                    slot.AddAmount(amount);
-                    amount = 0;
-                }
-                else
-                {
-                    amount -= item.maximumAmount - slot.Amount;
-                    slot.AddAmount(item.maximumAmount - slot.Amount);
-                }
-            }
-        }
-        return amount;
-    }
-
-    public void TryAddOneItem(ItemScriptableObject item)
-    {
-        AddItem(item, 1);
-    }
-
-    public int TryAddItemToChest(ItemScriptableObject item, int amount)
+    public int TryAddToChest(ItemScriptableObject item, int amount)
     {
         foreach (InventorySlot slot in chestInventorySlots)
         {
@@ -273,39 +213,34 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void GoToTheChest(Chest chest)
+    public void SetChestInventory(Chest chest)
     {
         OpenedChest = chest;
         for (int i = 0; i < chest.Slots.Length; i++)
         {
             chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);
         }
+        ui.OpenChest();
         IsChestOpened = true;
     }
 
     public void OpenChest(Chest chest)
     {
-        OpenedChest = chest;
-        for (int i = 0; i < chest.Slots.Length; i++)
-        {
-            chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);
-        }
-        IsChestOpened = true;
+        SetChestInventory(chest);
         if (!isOpened)
         {
-            CloseOpenInventory();
+            ui.ToggleInventory();
         }
     }
 
     public void OpenCraftingBuilding(CraftingBuilding building)
     {
         OpenedCraftingBuilding = building;
-
     }
 
     public void GoAwayFromTheChest()
     {
-        IsChestOpened = false;
+        ui.CloseChest();
     }
 
     public List<InventorySlot> GetChestInventorySlots()
@@ -317,8 +252,23 @@ public class InventoryManager : MonoBehaviour
     {
         if (isOpened)
         {
-            CloseOpenInventory();
+            ui.ToggleInventory();
         }
-    }
+    }    
+    
+    //private void TryToGetItem()
+    //{
+    //    Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(ray, out hit, reachDistance))
+    //    {
+    //        Item item = hit.collider.gameObject.GetComponent<Item>();
+    //        if (item != null)
+    //        {
+    //            AddItem(item.item, item.amount);
+    //            Destroy(item.gameObject);
+    //        }
+    //    }
+    //}
 }
 

@@ -35,7 +35,7 @@ public class CraftingSystem : MonoBehaviour
 
         yield return new WaitForSeconds(recipe.craftingTime);
 
-        InventoryManager.Instance.TryAddItem(recipe.resultItem, recipe.resultAmount);
+        InventoryManager.Instance.AddItem(recipe.resultItem, recipe.resultAmount);
         CalculateMaxInventoryCrafts();
     }
 

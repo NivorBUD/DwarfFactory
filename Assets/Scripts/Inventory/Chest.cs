@@ -45,7 +45,7 @@ public class Chest : Building
                 slot.PlaceItem(item, amount);
                 if (isOpen && isPlayerNear)
                 {
-                    inventoryManager.GoToTheChest(this);
+                    inventoryManager.SetChestInventory(this);
                 }
                 return;
             }
@@ -63,7 +63,7 @@ public class Chest : Building
 
                 if (isOpen && isPlayerNear)
                 {
-                    inventoryManager.GoToTheChest(this);
+                    inventoryManager.SetChestInventory(this);
                 }
                 return;
             }
@@ -74,7 +74,7 @@ public class Chest : Building
     //{
     //    if (other.CompareTag("Player"))
     //    {
-    //        inventoryManager.GoToTheChest(this);
+    //        inventoryManager.SetChestInventory(this);
     //        isPlayerNear = true;
     //    }
     //}
