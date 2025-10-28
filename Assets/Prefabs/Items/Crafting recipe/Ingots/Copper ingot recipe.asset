@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42fd3dc11f02e924c8da9cd7cc62ef16, type: 3}
+  m_Name: Copper ingot recipe
+  m_EditorClassIdentifier: 
+  ingredients:
+  - item: {fileID: 11400000, guid: 1feb0b286c2a2ec48bb1c54a6ec99a02, type: 2}
+    amount: 1
+  resultItem: {fileID: 11400000, guid: 06381f450f1c09447b21fe1f00fd151e, type: 2}
+  resultAmount: 1
+  craftingTime: 3

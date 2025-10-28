@@ -20,27 +20,22 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float interactionRadius = 1f;
     [SerializeField] private LayerMask interactableLayer;
 
-    [Header("Animation & Sound")]
-    [SerializeField] private PlayerAnimationController animController;
-
     private Vector2 moveInput;
     private Vector2 currentVelocity;
     private Rigidbody2D rb;
     private InputSystem_Actions controls;
+    private Animator animator;
+
     private bool isInteracting = false;
 
     private void Awake()
     {
         controls = new InputSystem_Actions();
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 
-        // Настройка физики
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
-
-        // Автоподхват аниматора
-        if (animController == null)
-            animController = GetComponent<PlayerAnimationController>();
     }
 
     private void OnEnable()
@@ -59,12 +54,12 @@ public class PlayerMovement : MonoBehaviour
         controls.Player.Disable();
     }
 
-    private void OnMove(InputAction.CallbackContext ctx)
+    private void OnMove(InputAction.CallbackContext context)
     {
-        moveInput = ctx.ReadValue<Vector2>();
+        moveInput = context.ReadValue<Vector2>();
     }
 
-    private void OnInteract(InputAction.CallbackContext ctx)
+    private void OnInteract(InputAction.CallbackContext context)
     {
         if (isInteracting) return;
         StartCoroutine(InteractCoroutine());
@@ -73,55 +68,56 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator InteractCoroutine()
     {
         isInteracting = true;
-        animController.PlayInteract(true);
+        animator.SetBool("IsInteracting", true);
 
-        // Поиск всех IInteractable рядом
+        // Попытка найти объект для взаимодействия
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactionRadius, interactableLayer);
-        foreach (var hit in hits)
-            if (hit.TryGetComponent<IInteractable>(out var interactable))
+        foreach (Collider2D hit in hits)
+        {
+            IInteractable interactable = hit.GetComponent<IInteractable>();
+            if (interactable != null)
             {
                 interactable.Interact(gameObject);
                 break;
             }
+        }
 
-        // Ждём окончания анимации (1 сек)
-        yield return new WaitForSeconds(1f);
+        // Даже если ничего не найдено — просто играем анимацию
+        yield return new WaitForSeconds(1f); // длительность взаимодействия
 
-        animController.PlayInteract(false);
+        animator.SetBool("IsInteracting", false);
         isInteracting = false;
     }
 
+
     private void FixedUpdate()
     {
-        if (isInteracting)
-        {
-            rb.linearVelocity = Vector2.zero;
-        }
-        else
-        {
+        if (!isInteracting)
             MoveCharacter();
-        }
+        else
+            rb.linearVelocity = Vector2.zero;
     }
 
     private void MoveCharacter()
     {
-        Vector2 targetVel = moveInput.normalized * moveSpeed;
+        Vector2 targetVelocity = moveInput.normalized * moveSpeed;
+
         currentVelocity = Vector2.MoveTowards(
             currentVelocity,
-            targetVel,
-            (targetVel.magnitude > currentVelocity.magnitude ? acceleration : deceleration) * Time.fixedDeltaTime
+            targetVelocity,
+            (targetVelocity.magnitude > currentVelocity.magnitude ? acceleration : deceleration) * Time.fixedDeltaTime
         );
 
         rb.linearVelocity = currentVelocity;
 
-        // Передаём скорость в анимацию
-        animController.UpdateSpeed(currentVelocity.magnitude);
+        // Анимация
+        //animator.SetFloat("Speed", currentVelocity.magnitude);
 
-        // Флип по X
+        // Поворот персонажа по X
         if (moveInput.x > 0.01f)
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-1, 1, 1); // вправо (задом)
         else if (moveInput.x < -0.01f)
-            transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = new Vector3(1, 1, 1); // влево (лицом)
     }
 
     private void OnDrawGizmosSelected()

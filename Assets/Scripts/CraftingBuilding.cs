@@ -1,8 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CraftingBuildingType
+{
+    Mine,
+    Smeltery,
+    Taanning,
+    Workshop,
+    WoodBreaker
+}
+
 public class CraftingBuilding : Building
 {
+    public CraftingBuildingType Type;
     public List<CraftingRecipe> AvailableCrafts;
     public BuildingInventory buildingInventory;
     private Queue<CraftingRecipe> jobQueue = new();
@@ -23,7 +33,7 @@ public class CraftingBuilding : Building
         }
         else
         {
-            Debug.Log("Недостаточно ресурсов в здании для крафта.");
+            Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
         }
     }
 
@@ -33,12 +43,12 @@ public class CraftingBuilding : Building
         while (jobQueue.Count > 0)
         {
             var recipe = jobQueue.Dequeue();
-            Debug.Log($"Начинается крафт: {recipe.resultItem.name}");
+            Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: {recipe.resultItem.name}");
 
             yield return new WaitForSeconds(recipe.craftingTime);
 
-            InventoryManager.Instance.TryAddItem(recipe.resultItem, recipe.resultAmount);
-            Debug.Log($"Закончен крафт: {recipe.resultItem.name}");
+            buildingInventory.resultSlot.PlaceItem(recipe.resultItem, recipe.resultAmount);
+            Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: {recipe.resultItem.name}");
         }
         isCrafting = false;
     }
@@ -51,5 +61,17 @@ public class CraftingBuilding : Building
                 return false;
         }
         return true;
+    }
+
+    public override void interaction()
+    {
+        setCrafts();
+    }
+
+    private void setCrafts()
+    {
+        foreach (CraftingRecipe recipe in AvailableCrafts) {
+
+        }
     }
 }
