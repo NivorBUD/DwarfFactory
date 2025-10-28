@@ -23,4 +23,9 @@ public class SpecificItemSlot : InventorySlot
             base.AddAmount(amount);
         }
     }
+
+    public void SetAllowedItem(ItemScriptableObject item)
+    {
+        allowedItem = item;
+    }
 }
