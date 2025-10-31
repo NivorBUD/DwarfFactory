@@ -12,8 +12,8 @@ public class InventoryManager : MonoBehaviour
     public bool IsChestOpened { get; private set; }
     public Chest OpenedChest { get; private set; }
     public CraftingBuilding OpenedCraftingBuilding { get; private set; }
-    [SerializeField] private GameObject closeButton;
-    [SerializeField] private GameObject craftingPanel;
+    //[SerializeField] private GameObject closeButton;
+    //[SerializeField] private GameObject craftingPanel;
 
     [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
     public InventoryUI ui;
@@ -64,29 +64,29 @@ public class InventoryManager : MonoBehaviour
         //    TryToGetItem();
     }
 
-    private void CloseOpenInventory()
-    {  
-        isOpened = !isOpened;
-        inventory.SetActive(isOpened);
-        UIPanel.SetActive(isOpened);
-        closeButton.SetActive(isOpened);
-        craftingPanel.SetActive(isOpened);
-        //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
-        //Cursor.visible = isOpened;
+    //private void CloseOpenInventory()
+    //{  
+    //    isOpened = !isOpened;
+    //    inventory.SetActive(isOpened);
+    //    UIPanel.SetActive(isOpened);
+    //    closeButton.SetActive(isOpened);
+    //    craftingPanel.SetActive(isOpened);
+    //    //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
+    //    //Cursor.visible = isOpened;
 
-        quickSlots.SetActive(IsChestOpened ? !isOpened : true);
-        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
-        if (chestInventory.activeSelf)
-        {
-            OpenedChest.SetSlots(chestInventorySlots.ToArray());
-        }
-        chestInventory.SetActive(IsChestOpened ? isOpened : false);
+    //    quickSlots.SetActive(IsChestOpened ? !isOpened : true);
+    //    //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
+    //    if (chestInventory.activeSelf)
+    //    {
+    //        OpenedChest.SetSlots(chestInventorySlots.ToArray());
+    //    }
+    //    chestInventory.SetActive(IsChestOpened ? isOpened : false);
         
-        if (OpenedChest)
-            OpenedChest.SetIsOpen(IsChestOpened);
+    //    if (OpenedChest)
+    //        OpenedChest.SetIsOpen(IsChestOpened);
 
-        IsChestOpened = false;
-    }
+    //    IsChestOpened = false;
+    //}
 
     public void AddOneItem(ItemScriptableObject item)
     {
