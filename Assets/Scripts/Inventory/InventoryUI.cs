@@ -10,40 +10,10 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject closeButton;
     [SerializeField] private GameObject craftingPanel;
 
-    public bool IsOpened => UIPanel.activeSelf;
+    public bool IsInventoryOpened => UIPanel.activeSelf;
     public bool IsChestOpened { get; private set; }
 
-    private void Awake()
-    {
-        ToggleInventory();
-    }
-
-    public void ToggleInventory()
-    {   
-        UIPanel.SetActive(!IsOpened);
-        inventory.SetActive(!IsOpened);
-        quickSlots.SetActive(!IsOpened);
-        chestInventory.SetActive(!IsOpened);
-        closeButton.SetActive(!IsOpened);
-        craftingPanel.SetActive(!IsOpened);
-
-        inventory.SetActive(IsOpened);
-        UIPanel.SetActive(IsOpened);
-        closeButton.SetActive(IsOpened);
-        craftingPanel.SetActive(IsOpened);
-        //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
-        //Cursor.visible = isOpened;
-
-        quickSlots.SetActive(IsChestOpened ? !IsOpened : true);
-        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
-        //if (chestInventory.activeSelf)
-        //{
-        //    OpenedChest.SetSlots(chestInventorySlots.ToArray());
-        //}
-        chestInventory.SetActive(IsChestOpened ? IsOpened : false);
-
-        IsChestOpened = false;
-    }
+    private InventoryContainer container;
 
     public void OpenChest()
     {
@@ -54,9 +24,56 @@ public class InventoryUI : MonoBehaviour
     public void CloseChest()
     {
         IsChestOpened = false;
-        if (IsOpened)
+        if (IsInventoryOpened)
         {
             ToggleInventory();
         }
     }
+
+    public void Initialize(InventoryContainer container)
+    {
+        this.container = container;
+        //Refresh();
+    }
+
+    public void UpdateSlot(int index, ItemScriptableObject item, int amount)
+    {
+        if (index >= 0 && index < container.Slots.Count)
+        {
+            container.Slots[index].Set(item, amount);
+        }
+    }
+
+    public void ToggleInventory()
+    {
+        inventory.SetActive(!IsInventoryOpened);
+        closeButton.SetActive(!IsInventoryOpened);
+        craftingPanel.SetActive(!IsInventoryOpened);
+
+        // зависит от открытия сундука
+        //chestInventory.SetActive(IsChestOpened ? !IsInventoryOpened : false);
+        //quickSlots.SetActive(IsChestOpened ? !IsInventoryOpened : true);
+        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
+        
+
+        IsChestOpened = false;
+        // последним, потому что на него ориентируется IsInventoryOpened
+        UIPanel.SetActive(!IsInventoryOpened);
+    }
+
+    //public void Refresh()
+    //{
+    //    // очищаем старые
+    //    foreach (Transform child in slotsParent)
+    //        Destroy(child.gameObject);
+
+    //    slotViews.Clear();
+
+    //    foreach (var slotData in container.Slots)
+    //    {
+    //        var slot = Instantiate(slotPrefab, slotsParent);
+    //        slot.Set(slotData.Item, slotData.Amount);
+    //        slotViews.Add(slot);
+    //    }
+    //}
 }

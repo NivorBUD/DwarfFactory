@@ -50,7 +50,7 @@ public class BuildingsGrid : MonoBehaviour
                     Instantiate(flyingBuilding.gameObject);
                     //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
-                    QuickslotsInventory.Instance.RemoveUsedItemFromActiveSlot();
+                    InventoryManager.Instance.RemoveUsedItemFromActiveSlot();
                 }
             }
         }

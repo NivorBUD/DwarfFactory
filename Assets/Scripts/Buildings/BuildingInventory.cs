@@ -35,9 +35,9 @@ public class BuildingInventory
     {
         foreach (var slot in slots)
         {
-            if (slot.isEmpty)
+            if (slot.IsEmpty)
             {
-                slot.PlaceItem(item, amount);
+                slot.Set(item, amount);
                 return;
             }
             if (slot.Item == item && slot.Amount < item.maximumAmount)

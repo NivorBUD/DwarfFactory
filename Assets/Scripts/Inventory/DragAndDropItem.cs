@@ -24,7 +24,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (oldSlot.isEmpty)
+        if (oldSlot.IsEmpty)
             return;
         //GetComponent<RectTransform>().position += new Vector3(eventData.delta.x / 100, eventData.delta.y / 100);
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -33,7 +33,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (oldSlot.isEmpty)
+        if (oldSlot.IsEmpty)
             return;
         GetComponentInChildren<Image>().color = new Color(1, 1, 1, 0.75f);
         GetComponentInChildren<Image>().raycastTarget = false;
@@ -42,7 +42,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (oldSlot.isEmpty)
+        if (oldSlot.IsEmpty)
             return;
         GetComponentInChildren<Image>().color = new Color(1, 1, 1, 1);
         GetComponentInChildren<Image>().raycastTarget = true;
@@ -68,26 +68,26 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             if (oldSlot.gameObject.GetComponent<ChestSlot>() != null)
             {
-                int remained = InventoryManager.Instance.AddItem(oldSlot.Item, oldSlot.Amount);
+                int remained = InventoryManager.Instance.AddItemsToInventory(oldSlot.Item, oldSlot.Amount);
                 if (remained == 0)
                 {
-                    oldSlot.ResetData();
+                    oldSlot.Clear();
                 }
                 else
                 {
-                    oldSlot.PlaceItem(oldSlot.Item, remained);
+                    oldSlot.Set(oldSlot.Item, remained);
                 }
             }
             else
             {
-                int remained = InventoryManager.Instance.TryAddToChest(oldSlot.Item, oldSlot.Amount);
+                int remained = InventoryManager.Instance.AddToOpenedChest(oldSlot.Item, oldSlot.Amount);
                 if (remained == 0)
                 {
-                    oldSlot.ResetData();
+                    oldSlot.Clear();
                 }
                 else
                 {
-                    oldSlot.PlaceItem(oldSlot.Item, remained);
+                    oldSlot.Set(oldSlot.Item, remained);
                 }
             }
             InventoryManager.Instance.OpenedChest.
@@ -120,7 +120,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
         else
         {
-            ExchangeDifferentTypeItem(newSlot, newSlot.Item, newSlot.Amount, newSlot.isEmpty);
+            ExchangeDifferentTypeItem(newSlot, newSlot.Item, newSlot.Amount, newSlot.IsEmpty);
         }
 
         if (InventoryManager.Instance.IsChestOpened)
@@ -132,26 +132,21 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void ExchangeDifferentTypeItem(InventorySlot newSlot, ItemScriptableObject item, int amount, bool isEmpty)
     {
-        newSlot.PlaceItem(oldSlot.Item, oldSlot.Amount);
+        newSlot.Set(oldSlot.Item, oldSlot.Amount);
 
-        newSlot.isEmpty = oldSlot.isEmpty;
-
-        oldSlot.PlaceItem(item, amount);
+        oldSlot.Set(item, amount);
         if (isEmpty)
         {
-            oldSlot.iconImage.color = new Color(1, 1, 1, 0);
-            oldSlot.iconImage.sprite = null;
-            oldSlot.textAmount.text = "";
+            oldSlot.Clear();
         }
-        oldSlot.isEmpty = isEmpty;
     }
 
     private void ExchangeOneTypeItem(InventorySlot newSlot, bool isHalf, bool isOne, int amount)
     {
-        if (newSlot.isEmpty)
+        if (newSlot.IsEmpty)
         {
-            newSlot.PlaceItem(oldSlot.Item, amount);
-            oldSlot.PlaceItem(oldSlot.Item, oldSlot.Amount - amount);
+            newSlot.Set(oldSlot.Item, amount);
+            oldSlot.Set(oldSlot.Item, oldSlot.Amount - amount);
             return;
         }
         
@@ -160,16 +155,16 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             newSlot.AddAmount(amount);
             if (!(isOne || isHalf))
             {
-                oldSlot.ResetData();
+                oldSlot.Clear();
             }
             else
             {
-                oldSlot.PlaceItem(oldSlot.Item, oldSlot.Amount - amount);
+                oldSlot.Set(oldSlot.Item, oldSlot.Amount - amount);
             }
         }
         else
         {
-            oldSlot.PlaceItem(oldSlot.Item, oldSlot.Amount - newSlot.EmptyAmount);
+            oldSlot.Set(oldSlot.Item, oldSlot.Amount - newSlot.EmptyAmount);
             newSlot.AddAmount(newSlot.EmptyAmount);
         }
     }

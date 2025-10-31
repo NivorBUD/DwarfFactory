@@ -6,14 +6,14 @@ public class SpecificItemSlot : InventorySlot
 
     public ItemScriptableObject AllowedItem => allowedItem;
 
-    public new void PlaceItem(ItemScriptableObject item, int amount)
+    public new void Set(ItemScriptableObject item, int amount)
     {
         if (item == null || item != allowedItem)
         {
             return;
         }
 
-        base.PlaceItem(item, amount);
+        base.Set(item, amount);
     }
 
     public new void AddAmount(int amount)

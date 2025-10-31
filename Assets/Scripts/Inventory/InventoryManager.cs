@@ -9,47 +9,49 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
-    public bool IsChestOpened { get; private set; }
-    public Chest OpenedChest { get; private set; }
-    public CraftingBuilding OpenedCraftingBuilding { get; private set; }
-    //[SerializeField] private GameObject closeButton;
-    //[SerializeField] private GameObject craftingPanel;
-
-    [SerializeField] private GameObject inventory, UIPanel, chestInventory, quickSlots;
     public InventoryUI ui;
-    private List<InventorySlot> inventorySlots, chestInventorySlots, quickInventorySlots;
+    [SerializeField] private GameObject inventory, quickSlots, chestInventory;
 
-    private bool isOpened;
-    private Camera mainCamera;
-    private float reachDistance = 20;
+    private InventoryContainer playerContainer;
+    private QuickSlotsInventoryContainer playerQuickContainer;
+
+    public bool IsChestOpened => ui.IsChestOpened;
+
+    public Chest OpenedChest { get; private set; }
+
+    public CraftingBuilding OpenedCraftingBuilding { get; private set; }
 
     private void Awake()
     {
-        inventorySlots = new();
-        chestInventorySlots = new();
-        quickInventorySlots = new();
         Instance = this;
-        mainCamera = Camera.main;
 
-        InitializeSlots();
+        InitializeContainers();
+        InitializeUI();
+
+        // ui изначально включен дл€ инициализации, выключаем его
+        ui.ToggleInventory(); 
     }
 
-    private void InitializeSlots()
+    private void InitializeContainers()
     {
-        FillSlotList(inventory, inventorySlots);
-        FillSlotList(chestInventory, chestInventorySlots);
-        FillSlotList(quickSlots, quickInventorySlots);
+        playerContainer = new InventoryContainer(inventory);
+        playerQuickContainer = new QuickSlotsInventoryContainer(quickSlots);
+
+        //FillSlotList(chestInventory, chestInventorySlots);
     }
 
-    private void FillSlotList(GameObject parent, List<InventorySlot> slotList)
+    private void InitializeUI()
     {
-        for (int i = 0; i < parent.transform.childCount; i++)
+        if (ui != null)
         {
-            if (parent.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
-            {
-                slotList.Add(slot);
-            }
+            ui.Initialize(playerContainer);
         }
+
+
+        //if (chestInventoryUI != null)
+        //{
+        //    chestInventoryUI.Hide();
+        //}
     }
 
     private void Update()
@@ -58,126 +60,72 @@ public class InventoryManager : MonoBehaviour
         {
             ui.ToggleInventory();
         }
-            
 
-        //if (Input.GetMouseButtonDown(0))
-        //    TryToGetItem();
+
+        // дл€ смены активного слота дл€ быстрых слотов
+        if (ui.IsInventoryOpened) return;
+
+        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+
+        if (mouseWheel > 0.1)
+            playerQuickContainer.ScrollUp();
+
+        if (mouseWheel < -0.1)
+            playerQuickContainer.ScrollDown();
+
+        playerQuickContainer.CheckNums();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (BuildingsGrid.Instance.IsPlacingBuilding)
+            {
+                BuildingsGrid.Instance.StopPlacingBuilding();
+            }
+            else if (playerQuickContainer.activeSlot != null && 
+                playerQuickContainer.activeSlot.Item != null && 
+                playerQuickContainer.activeSlot.Item.itemType == ItemType.Building)
+            {
+                BuildingsGrid.Instance.StartPlacingBuilding(playerQuickContainer.activeSlot.Item.itemPrefab.GetComponent<Building>());
+            }
+        }
+
+        if (BuildingsGrid.Instance.IsPlacingBuilding && playerQuickContainer.activeSlot.Amount == 0)
+        {
+            BuildingsGrid.Instance.StopPlacingBuilding();
+        }
     }
 
-    //private void CloseOpenInventory()
-    //{  
-    //    isOpened = !isOpened;
-    //    inventory.SetActive(isOpened);
-    //    UIPanel.SetActive(isOpened);
-    //    closeButton.SetActive(isOpened);
-    //    craftingPanel.SetActive(isOpened);
-    //    //Cursor.lockState = isOpened ? CursorLockMode.None : CursorLockMode.Locked;
-    //    //Cursor.visible = isOpened;
-
-    //    quickSlots.SetActive(IsChestOpened ? !isOpened : true);
-    //    //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
-    //    if (chestInventory.activeSelf)
-    //    {
-    //        OpenedChest.SetSlots(chestInventorySlots.ToArray());
-    //    }
-    //    chestInventory.SetActive(IsChestOpened ? isOpened : false);
-        
-    //    if (OpenedChest)
-    //        OpenedChest.SetIsOpen(IsChestOpened);
-
-    //    IsChestOpened = false;
-    //}
-
-    public void AddOneItem(ItemScriptableObject item)
+    public void AddOneItemToInventory(ItemScriptableObject item)
     {
         int amount = 1;
-        TryAddToSlots(quickInventorySlots, item, ref amount);
-        TryAddToSlots(inventorySlots, item, ref amount);
+        amount = playerQuickContainer.AddItems(item, amount);
+        amount = playerContainer.AddItems(item, amount);
     }
 
-    public int AddItem(ItemScriptableObject item, int amount)
+    public int AddItemsToInventory(ItemScriptableObject item, int amount)
     {
         if (amount <= 0) return 0;
 
-        TryAddToSlots(quickInventorySlots, item, ref amount);
-        TryAddToSlots(inventorySlots, item, ref amount);
+        amount = playerQuickContainer.AddItems(item, amount);
+        amount = playerContainer.AddItems(item, amount);
 
         return amount; // остаток, если не хватило места
     }
 
-    private void TryAddToSlots(List<InventorySlot> slots, ItemScriptableObject item, ref int amount)
-    {
-        // ƒобавл€ем в существующие стаки
-        foreach (var slot in slots)
-        {
-            if (amount <= 0) return;
-
-            if (!slot.isEmpty && slot.Item == item && slot.Amount < item.maximumAmount)
-            {
-                int space = item.maximumAmount - slot.Amount;
-                int addAmount = Mathf.Min(amount, space);
-                slot.AddAmount(addAmount);
-                amount -= addAmount;
-            }
-        }
-
-        // ƒобавл€ем в пустые слоты
-        foreach (var slot in slots)
-        {
-            if (amount <= 0) return;
-
-            if (slot.isEmpty)
-            {
-                int placeAmount = Mathf.Min(amount, item.maximumAmount);
-                slot.PlaceItem(item, placeAmount);
-                amount -= placeAmount;
-            }
-        }
-    }
-
-    public int TryAddToChest(ItemScriptableObject item, int amount)
-    {
-        foreach (InventorySlot slot in chestInventorySlots)
-        {
-            if (amount == 0)
-            {
-                return 0;
-            }
-
-            if (slot.isEmpty)
-            {
-                slot.PlaceItem(item, amount);
-                return 0;
-            }
-
-            if (slot.Item == item && slot.Amount < item.maximumAmount)
-            {
-                if (slot.Amount + amount <= item.maximumAmount)
-                {
-                    slot.AddAmount(amount);
-                    amount = 0;
-                }
-                else
-                {
-                    amount -= item.maximumAmount - slot.Amount;
-                    slot.AddAmount(item.maximumAmount - slot.Amount);
-                }
-            }
-        }
-        return amount;
-    }
+    public int AddToOpenedChest(ItemScriptableObject item, int amount)
+        => OpenedChest.AddItems(item, amount);
 
     public int CountItem(ItemScriptableObject item)
     {
         int count = 0;
 
-        foreach (var slot in inventorySlots)
+        foreach (var slot in playerContainer.Slots)
         {
             if (slot.Item == item)
                 count += slot.Amount;
         }
 
-        foreach (var slot in quickInventorySlots)
+        foreach (var slot in playerQuickContainer.Slots)
         {
             if (slot.Item == item)
                 count += slot.Amount;
@@ -188,7 +136,7 @@ public class InventoryManager : MonoBehaviour
 
     public void RemoveItems(ItemScriptableObject item, int amount)
     {
-        foreach (var slot in inventorySlots)
+        foreach (var slot in playerContainer.Slots)
         {
             if (amount <= 0) break;
 
@@ -200,7 +148,7 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        foreach (var slot in quickInventorySlots)
+        foreach (var slot in playerQuickContainer.Slots)
         {
             if (amount <= 0) break;
 
@@ -213,24 +161,22 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void SetChestInventory(Chest chest)
+    public void RemoveUsedItemFromActiveSlot()
     {
-        OpenedChest = chest;
-        for (int i = 0; i < chest.Slots.Length; i++)
-        {
-            chestInventorySlots[i].PlaceItem(chest.Slots[i].Item, chest.Slots[i].Amount);
-        }
-        ui.OpenChest();
-        IsChestOpened = true;
+        playerQuickContainer.RemoveUsedItemFromActiveSlot();
     }
 
     public void OpenChest(Chest chest)
     {
-        SetChestInventory(chest);
-        if (!isOpened)
-        {
-            ui.ToggleInventory();
-        }
+        OpenedChest = chest;
+        OpenedChest.InizializeUISlotsFromParentObj(chestInventory);
+        ui.OpenChest();
+    }
+
+    public List<InventorySlot> GetChestInventorySlots()
+    {
+        return new List<InventorySlot>();
+        //return OpenedChest.inventoryContainer.Slots;
     }
 
     public void OpenCraftingBuilding(CraftingBuilding building)
@@ -238,37 +184,9 @@ public class InventoryManager : MonoBehaviour
         OpenedCraftingBuilding = building;
     }
 
-    public void GoAwayFromTheChest()
-    {
-        ui.CloseChest();
-    }
-
-    public List<InventorySlot> GetChestInventorySlots()
-    {
-        return chestInventorySlots;
-    }
-    
     public void CloseInventoryFromButton()
     {
-        if (isOpened)
-        {
-            ui.ToggleInventory();
-        }
-    }    
-    
-    //private void TryToGetItem()
-    //{
-    //    Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(ray, out hit, reachDistance))
-    //    {
-    //        Item item = hit.collider.gameObject.GetComponent<Item>();
-    //        if (item != null)
-    //        {
-    //            AddItem(item.item, item.amount);
-    //            Destroy(item.gameObject);
-    //        }
-    //    }
-    //}
+        ui.ToggleInventory();
+    }
 }
 

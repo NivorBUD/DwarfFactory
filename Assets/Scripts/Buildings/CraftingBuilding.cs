@@ -191,7 +191,7 @@ public class CraftingBuilding : Building
             Destroy(slot.gameObject);
         }
         inputSlots.Clear();
-        outputSlot.ResetData();
+        outputSlot.Clear();
 
         for (int i = 0; i < recipe.ingredients.Count; i++)
         {
@@ -251,7 +251,7 @@ public class CraftingBuilding : Building
 
         if (outputSlot.Item == null)
         {
-            outputSlot.PlaceItem(currentRecipe.resultItem, currentRecipe.resultAmount);
+            outputSlot.Set(currentRecipe.resultItem, currentRecipe.resultAmount);
         }
         else
         {
@@ -286,30 +286,30 @@ public class CraftingBuilding : Building
     {
         foreach (var slot in inputSlots)
         {
-            if (!slot.isEmpty)
+            if (!slot.IsEmpty)
             {
-                int remaining = InventoryManager.Instance.AddItem(slot.Item, slot.Amount);
+                int remaining = InventoryManager.Instance.AddItemsToInventory(slot.Item, slot.Amount);
                 if (remaining > 0)
                 {
-                    slot.PlaceItem(slot.Item, remaining);
+                    slot.Set(slot.Item, remaining);
                 }
                 else
                 {
-                    slot.ResetData();
+                    slot.Clear();
                 }
             }
         }
 
-        if (!outputSlot.isEmpty)
+        if (!outputSlot.IsEmpty)
         {
-            int remaining = InventoryManager.Instance.AddItem(outputSlot.Item, outputSlot.Amount);
+            int remaining = InventoryManager.Instance.AddItemsToInventory(outputSlot.Item, outputSlot.Amount);
             if (remaining > 0)
             {
-                outputSlot.PlaceItem(outputSlot.Item, remaining);
+                outputSlot.Set(outputSlot.Item, remaining);
             }
             else
             {
-                outputSlot.ResetData();
+                outputSlot.Clear();
             }
         }
     }
