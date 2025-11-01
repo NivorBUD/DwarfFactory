@@ -47,8 +47,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Size: {x: 4, y: 4}
-  AvailableCrafts:
-  - {fileID: 11400000, guid: c7d0738686d6f4b4d917eddacf4c3110, type: 2}
+  buildingType: 2
+  mainUI: {fileID: 0}
+  selectionUI: {fileID: 0}
+  craftingUI: {fileID: 0}
+  inputSlotsContainer: {fileID: 0}
+  outputSlot: {fileID: 0}
+  recipeItemSlotPrefab: {fileID: 0}
+  specificItemSlotPrefab: {fileID: 0}
+  backToSelectionButton: {fileID: 0}
+  closeUIButton: {fileID: 0}
+  craftingProgress: {fileID: 0}
+  InventorySlots: {fileID: 0}
+  availableRecipes: []
+  recipesContainer: {fileID: 0}
 --- !u!61 &7005393657147260016
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -147,6 +159,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -168,6 +182,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -867622563
   m_SortingLayer: 2
   m_SortingOrder: 0

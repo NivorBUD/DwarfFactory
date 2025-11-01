@@ -7,19 +7,11 @@ using UnityEngine;
 public class Chest : Building
 {
     public ChestSlot[] Slots { get; private set; }
-
-    private InventoryManager inventoryManager;
-    private bool isOpen, isPlayerNear;
+    private InventoryContainer inventoryContainer;
 
     private void Start()
     {
-        inventoryManager = InventoryManager.Instance;
-        Slots = new ChestSlot[21];
-        for (int i = 0; i < Slots.Length; i++)
-        {
-            Slots[i] = new();
-            Slots[i].isEmpty = true;
-        }
+        inventoryContainer = new();
     }
 
     private void FixedUpdate()
@@ -31,62 +23,35 @@ public class Chest : Building
 
             if (hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                inventoryManager.OpenChest(this);
+                InventoryManager.Instance.OpenChest(this);
             }
         }
     }
 
-    public void AddItem(ItemScriptableObject item, int amount)
+    public void InizializeUISlotsFromParentObj(GameObject parent)
     {
-        foreach (ChestSlot slot in Slots)
+        List<InventorySlot> slots = new ();
+        bool isSetSlot = inventoryContainer.Slots.Count == parent.transform.childCount;
+        for (int i = 0; i < parent.transform.childCount; i++)
         {
-            if (slot.isEmpty)
+            if (parent.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
             {
-                slot.PlaceItem(item, amount);
-                if (isOpen && isPlayerNear)
+                if (isSetSlot)
                 {
-                    inventoryManager.GoToTheChest(this);
+                    slot.Set(inventoryContainer.Slots[i].Item, inventoryContainer.Slots[i].Amount);
                 }
-                return;
-            }
-
-            if (slot.Item == item && slot.Amount < item.maximumAmount)
-            {
-                if (slot.Amount + amount <= item.maximumAmount)
-                    slot.AddAmount(amount);
                 else
                 {
-                    amount -= item.maximumAmount - slot.Amount;
-                    slot.AddAmount(item.maximumAmount - slot.Amount);
-                    AddItem(item, amount);
+                    slots.Add(slot);
                 }
-
-                if (isOpen && isPlayerNear)
-                {
-                    inventoryManager.GoToTheChest(this);
-                }
-                return;
             }
         }
+
+        inventoryContainer.SetNewSlots(slots);
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        inventoryManager.GoToTheChest(this);
-    //        isPlayerNear = true;
-    //    }
-    //}
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        inventoryManager.GoAwayFromTheChest();
-    //        isPlayerNear = false;
-    //    }
-    //}
+    public int AddItems(ItemScriptableObject item, int amount)
+        => inventoryContainer.AddItems(item, amount);
 
     public void SetSlots(InventorySlot[] newSlots)
     {
@@ -96,13 +61,8 @@ public class Chest : Building
         }
     }
 
-    public void SetIsOpen(bool newValue)
-    {
-        isOpen = newValue;
-    }
-
     public override void interaction()
     {
-        inventoryManager.OpenChest(this);
+        InventoryManager.Instance.OpenChest(this);
     }
 }
