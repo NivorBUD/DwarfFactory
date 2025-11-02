@@ -41,11 +41,16 @@ public class QuickSlotsInventoryContainer : InventoryContainer
         activeSlot.RemoveAmount(1);
     }
 
-    // Метод больше не нужен - обработка перенесена в InputHandler
-    // Оставлен для обратной совместимости, но не используется
     public void CheckNums()
     {
-        // Обработка теперь в InputHandler через события
+        for (int i = 0; i < Slots.Count; i++)
+        {
+            if (Input.GetKeyDown((i + 1).ToString()))
+            {
+                ChangeActiveSlotTo(i);
+                break;
+            }
+        }
     }
 
     public void ScrollDown()

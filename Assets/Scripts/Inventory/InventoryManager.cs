@@ -28,7 +28,7 @@ public class InventoryManager : MonoBehaviour
         InitializeContainers();
         InitializeUI();
 
-        // ui пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+        // ui изначально включен для инициализации, выключаем его
         ui.ToggleInventory(); 
     }
 
@@ -54,83 +54,44 @@ public class InventoryManager : MonoBehaviour
         //}
     }
 
-    private void OnEnable()
-    {
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInventoryToggle += HandleInventoryToggle;
-            InputHandler.Instance.OnScrollUp += HandleScrollUp;
-            InputHandler.Instance.OnScrollDown += HandleScrollDown;
-            InputHandler.Instance.OnQuickSlotSelect += HandleQuickSlotSelect;
-            InputHandler.Instance.OnBuildingPlace += HandleBuildingPlace;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInventoryToggle -= HandleInventoryToggle;
-            InputHandler.Instance.OnScrollUp -= HandleScrollUp;
-            InputHandler.Instance.OnScrollDown -= HandleScrollDown;
-            InputHandler.Instance.OnQuickSlotSelect -= HandleQuickSlotSelect;
-            InputHandler.Instance.OnBuildingPlace -= HandleBuildingPlace;
-        }
-    }
-
     private void Update()
     {
-        // РџСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕР№ Р°РєС‚РёРІРЅС‹Р№ СЃР»РѕС‚ РїСЂРё СЂР°Р·РјРµС‰РµРЅРёРё Р·РґР°РЅРёСЏ
-        if (BuildingsGrid.Instance.IsPlacingBuilding && 
-            playerQuickContainer.activeSlot != null && 
-            playerQuickContainer.activeSlot.Amount == 0)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            BuildingsGrid.Instance.StopPlacingBuilding();
+            ui.ToggleInventory();
         }
-    }
 
-    private void HandleInventoryToggle()
-    {
-        ui.ToggleInventory();
-    }
 
-    private void HandleScrollUp()
-    {
-        if (!ui.IsInventoryOpened)
-        {
-            playerQuickContainer.ScrollUp();
-        }
-    }
-
-    private void HandleScrollDown()
-    {
-        if (!ui.IsInventoryOpened)
-        {
-            playerQuickContainer.ScrollDown();
-        }
-    }
-
-    private void HandleQuickSlotSelect(int slotNumber)
-    {
-        if (!ui.IsInventoryOpened)
-        {
-            playerQuickContainer.ChangeActiveSlotTo(slotNumber - 1);
-        }
-    }
-
-    private void HandleBuildingPlace()
-    {
+        // для смены активного слота для быстрых слотов
         if (ui.IsInventoryOpened) return;
 
-        if (BuildingsGrid.Instance.IsPlacingBuilding)
+        float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+
+        if (mouseWheel > 0.1)
+            playerQuickContainer.ScrollUp();
+
+        if (mouseWheel < -0.1)
+            playerQuickContainer.ScrollDown();
+
+        playerQuickContainer.CheckNums();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (BuildingsGrid.Instance.IsPlacingBuilding)
+            {
+                BuildingsGrid.Instance.StopPlacingBuilding();
+            }
+            else if (playerQuickContainer.activeSlot != null && 
+                playerQuickContainer.activeSlot.Item != null && 
+                playerQuickContainer.activeSlot.Item.itemType == ItemType.Building)
+            {
+                BuildingsGrid.Instance.StartPlacingBuilding(playerQuickContainer.activeSlot.Item.itemPrefab.GetComponent<Building>());
+            }
+        }
+
+        if (BuildingsGrid.Instance.IsPlacingBuilding && playerQuickContainer.activeSlot.Amount == 0)
         {
             BuildingsGrid.Instance.StopPlacingBuilding();
-        }
-        else if (playerQuickContainer.activeSlot != null && 
-            playerQuickContainer.activeSlot.Item != null && 
-            playerQuickContainer.activeSlot.Item.itemType == ItemType.Building)
-        {
-            BuildingsGrid.Instance.StartPlacingBuilding(playerQuickContainer.activeSlot.Item.itemPrefab.GetComponent<Building>());
         }
     }
 
@@ -148,7 +109,7 @@ public class InventoryManager : MonoBehaviour
         amount = playerQuickContainer.AddItems(item, amount);
         amount = playerContainer.AddItems(item, amount);
 
-        return amount; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+        return amount; // остаток, если не хватило места
     }
 
     public int AddToOpenedChest(ItemScriptableObject item, int amount)

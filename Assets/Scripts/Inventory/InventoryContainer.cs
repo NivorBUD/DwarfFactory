@@ -34,12 +34,12 @@ public class InventoryContainer
 
     public int AddItems(ItemScriptableObject item, int amount)
     {
-        // Р”РѕР±Р°РІР»СЏРµРј РІ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ СЃС‚Р°РєРё
+        // Добавляем в существующие стаки
         foreach (var slot in slots)
         {
             if (amount <= 0) return 0;
 
-            if (!slot.isEmpty && slot.Item == item && slot.Amount < item.maximumAmount)
+            if (!slot.IsEmpty && slot.Item == item && slot.Amount < item.maximumAmount)
             {
                 int space = item.maximumAmount - slot.Amount;
                 int addAmount = Mathf.Min(amount, space);
@@ -48,20 +48,20 @@ public class InventoryContainer
             }
         }
 
-        // Р”РѕР±Р°РІР»СЏРµРј РІ РїСѓСЃС‚С‹Рµ СЃР»РѕС‚С‹
+        // Добавляем в пустые слоты
         foreach (var slot in slots)
         {
             if (amount <= 0) return 0;
 
-            if (slot.isEmpty)
+            if (slot.IsEmpty)
             {
                 int placeAmount = Mathf.Min(amount, item.maximumAmount);
-                slot.PlaceItem(item, placeAmount);
+                slot.Set(item, placeAmount);
                 amount -= placeAmount;
             }
         }
 
-        // Р§С‚Рѕ РЅРµ РІР»РµР·Р»Рѕ
+        // что не влезло
         return amount;
     }
 
@@ -72,8 +72,9 @@ public class InventoryContainer
             if (slot.Item == item)
             {
                 int toRemove = Mathf.Min(amount, slot.Amount);
-                slot.RemoveAmount(toRemove);
+                slot.AddAmount(toRemove);
                 amount -= toRemove;
+                if (slot.Amount <= 0) slot.Clear();
                 if (amount <= 0) return true;
             }
         }
