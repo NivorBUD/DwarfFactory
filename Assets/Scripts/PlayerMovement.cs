@@ -27,6 +27,10 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
 
     private bool isInteracting = false;
+    
+    // Кэш для оптимизации анимации
+    private float lastSpeed = -1f;
+    private float lastDirectionX = 0f;
 
     private void Awake()
     {
@@ -110,8 +114,22 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = currentVelocity;
 
-        // Анимация
-        //animator.SetFloat("Speed", currentVelocity.magnitude);
+        // Обновление параметров анимации ТОЛЬКО при изменении
+        if (animator != null)
+        {
+            float currentSpeed = currentVelocity.magnitude;
+            if (Mathf.Abs(currentSpeed - lastSpeed) > 0.01f)
+            {
+                animator.SetFloat("Speed", currentSpeed);
+                lastSpeed = currentSpeed;
+            }
+
+            if (Mathf.Abs(moveInput.x - lastDirectionX) > 0.01f)
+            {
+                animator.SetFloat("DirectionX", moveInput.x);
+                lastDirectionX = moveInput.x;
+            }
+        }
 
         // Поворот персонажа по X
         if (moveInput.x > 0.01f)

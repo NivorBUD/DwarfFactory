@@ -6,10 +6,10 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using System;
-/// IPointerDownHandler - Следит за нажатиями мышки по объекту на котором висит этот скрипт
-/// IPointerUpHandler - Следит за отпусканием мышки по объекту на котором висит этот скрипт
-/// IDragHandler - Следит за тем не водим ли мы нажатую мышку по объекту <summary>
-/// IPointerDownHandler - Следит за нажатиями мышки по объекту на котором висит этот скрипт
+/// IPointerDownHandler - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+/// IPointerUpHandler - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+/// IDragHandler - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ <summary>
+/// IPointerDownHandler - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
@@ -64,7 +64,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             ExchangeSlotData(eventData.pointerCurrentRaycast.gameObject.transform.parent.parent.GetComponent<InventorySlot>());
         }
-        else if (Input.GetKey(KeyCode.LeftControl) && InventoryManager.Instance.IsChestOpened)
+        else if (InputHandler.Instance != null && InputHandler.Instance.IsControlHeld && InventoryManager.Instance.IsChestOpened)
         {
             if (oldSlot.gameObject.GetComponent<ChestSlot>() != null)
             {
@@ -95,14 +95,14 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
     }
 
-    void ExchangeSlotData(InventorySlot newSlot) //newSlot - куда перетаскиваем, oldSlot - откуда 
+    void ExchangeSlotData(InventorySlot newSlot) //newSlot - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, oldSlot - пїЅпїЅпїЅпїЅпїЅпїЅ 
     {
         if (oldSlot == newSlot)
         {
             return;
         }
-        bool isHalf = Input.GetKey(KeyCode.LeftShift);
-        bool isOne = Input.GetKey(KeyCode.LeftControl);
+        bool isHalf = InputHandler.Instance != null && InputHandler.Instance.IsShiftHeld;
+        bool isOne = InputHandler.Instance != null && InputHandler.Instance.IsControlHeld;
 
         int deltaAmount = oldSlot.Amount;
         if (isOne)
