@@ -6,94 +6,69 @@ using TMPro;
 
 public class CraftingSlot : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField]
-    private CraftingRecipe Recipe;
-
-    private Sprite iconSprite;     // картинка иконки результата
-    private Sprite emptySprite;
-    [SerializeField]private Image itemImage;       // фон слота (также ловит клики)
-    private TextMeshProUGUI amountText; // сколько штук можно крафтить
+    [SerializeField] private CraftingRecipe recipe;
+    [SerializeField] private Image itemImage;
+    [SerializeField] private Image progressOverlay; // полупрозрачная заливка прогресса
+    [SerializeField] private TextMeshProUGUI amountText;
 
     private bool isCrafting = false;
 
     private void Start()
     {
-        amountText = transform.GetComponentInChildren<TextMeshProUGUI>();
-        emptySprite = itemImage.sprite;
-        SetRecipe(Recipe);
+        if (recipe != null)
+            SetRecipe(recipe);
     }
 
-    /// <summary>
-    /// Задаёт рецепт и обновляет UI
-    /// </summary>
-    public void SetRecipe(CraftingRecipe recipe)
+    public void SetRecipe(CraftingRecipe newRecipe)
     {
-        Recipe = recipe;
+        recipe = newRecipe;
 
-        if (Recipe == null)
+        if (recipe == null)
         {
-            ClearSlot();
-            return;
-        }
-
-        iconSprite = Recipe.resultItem.icon;
-        itemImage.sprite = iconSprite;
-        itemImage.color = Color.white;
-
-        RefreshAmountText();
-    }
-
-    private void ClearSlot()
-    {
-        Recipe = null;
-        iconSprite = null;
-        amountText.text = "";
-        itemImage.color = Color.clear;
-    }
-
-    public void RefreshAmountText()
-    {
-        if (Recipe == null)
-        {
+            itemImage.color = Color.clear;
             amountText.text = "";
             return;
         }
 
-        int maxCrafts = CraftingSystem.Instance.CalculateMaxCrafts(Recipe);
-        if (maxCrafts > 0)
-        {
-            amountText.text = maxCrafts.ToString();
-        }
-        else
-        {
-            amountText.text = maxCrafts == -1 ? "" : maxCrafts.ToString();
-        }
+        itemImage.sprite = recipe.resultItem.icon;
+        itemImage.color = Color.white;
+        RefreshAmountText();
     }
 
-    /// <summary>
-    /// Это метод из IPointerClickHandler, ловит нажатие по itemImage или любому Raycast-Target UI-элементу на этом объекте
-    /// </summary>
+    public void RefreshAmountText()
+    {
+        int maxCrafts = InventoryManager.Instance != null
+            ? InventoryManager.Instance.CalculateMaxCrafts(recipe)
+            : 0;
+
+        amountText.text = maxCrafts > 0 ? maxCrafts.ToString() : "";
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (Recipe == null || isCrafting)
+        if (recipe == null || isCrafting)
             return;
 
-        int maxCrafts = CraftingSystem.Instance.CalculateMaxCrafts(Recipe);
-        if (maxCrafts == 0)
-            return;
-
-        Craft();
+        PlayerCraftingSystem.Instance.QueueCraft(recipe);
+        StartCoroutine(ShowProgress(recipe.craftingTime));
     }
 
-    private void Craft()
+    private IEnumerator ShowProgress(float duration)
     {
         isCrafting = true;
-        // Можно тут включить прогресс-бар/анимацию
+        float t = 0f;
+        progressOverlay.fillAmount = 0f;
 
-        bool ok = CraftingSystem.Instance.Craft(Recipe);
-        if (!ok)
-            Debug.LogWarning($"Не удалось скрафтить {Recipe.resultItem.itemName}");
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            progressOverlay.fillAmount = t / duration;
+            yield return null;
+        }
 
+        progressOverlay.fillAmount = 1f;
+        yield return new WaitForSeconds(0.1f);
+        progressOverlay.fillAmount = 0f;
         isCrafting = false;
         RefreshAmountText();
     }

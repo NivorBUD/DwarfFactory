@@ -188,5 +188,18 @@ public class InventoryManager : MonoBehaviour
     {
         ui.ToggleInventory();
     }
+
+    public int CalculateMaxCrafts(CraftingRecipe recipe)
+    {
+        int maxCrafts = -1;
+        foreach (var ingredient in recipe.ingredients)
+        {
+            int playerAmount = InventoryManager.Instance.CountItem(ingredient.item);
+            int craftsForThisItem = playerAmount / ingredient.amount;
+            if (craftsForThisItem < maxCrafts || maxCrafts == -1)
+                maxCrafts = craftsForThisItem;
+        }
+        return maxCrafts;
+    }
 }
 
