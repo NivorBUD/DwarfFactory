@@ -18,29 +18,17 @@ public class CraftingBuilding : Building
     public CraftingBuildingType buildingType;
 
     [Header("UI References")]
-    [SerializeField]
-    private GameObject mainUI;
-    [SerializeField]
-    private GameObject selectionUI;
-    [SerializeField]
-    private GameObject craftingUI;
-    [SerializeField]
-    private Transform inputSlotsContainer;
-    [SerializeField]
-    private SpecificItemSlot outputSlot;
-    [SerializeField]
-    private GameObject recipeItemSlotPrefab;
-    [SerializeField]
-    private GameObject specificItemSlotPrefab;
-    [SerializeField]
-    private Button backToSelectionButton;
-    [SerializeField]
-    private Button closeUIButton;
-    [SerializeField]
-    private Slider craftingProgress;
-    [SerializeField]
-    private GameObject InventorySlots;
-    //public Toggle autoCraftToggle;
+    [SerializeField] private GameObject mainUI;
+    [SerializeField] private GameObject selectionUI;
+    [SerializeField] private GameObject craftingUI;
+    [SerializeField] private Transform inputSlotsContainer;
+    [SerializeField] private SpecificItemSlot outputSlot;
+    [SerializeField] private GameObject recipeItemSlotPrefab;
+    [SerializeField] private GameObject specificItemSlotPrefab;
+    [SerializeField] private Button backToSelectionButton;
+    [SerializeField] private Button closeUIButton;
+    [SerializeField] private Slider craftingProgress;
+    [SerializeField] private GameObject InventorySlots;
 
     [Header("Recipe Selection")]
     public CraftingRecipe[] availableRecipes;
@@ -48,15 +36,17 @@ public class CraftingBuilding : Building
 
     private CraftingRecipe currentRecipe;
     private bool isCrafting = false;
-    private List<SpecificItemSlot> inputSlots = new List<SpecificItemSlot>();
+    private List<SpecificItemSlot> inputSlots = new();
     private float craftingTimer = 0f;
     private bool isUIOpen = false;
-    private bool isAutoCraftEnabled = false; 
+
+    private BuildingCraftingSystem craftingSystem;
+    private CraftingBuildingUI ui;
 
     private void Awake()
     {
         backToSelectionButton.onClick.AddListener(ReturnToSelection);
-        //autoCraftToggle.onValueChanged.AddListener(SetAutoCraft);
+        closeUIButton.onClick.AddListener(CloseUI);
     }
 
     protected override void OnEnable()
@@ -87,45 +77,14 @@ public class CraftingBuilding : Building
 
     private void Update()
     {
-        // Автоматический крафт, если включен и есть рецепт
-        if (isAutoCraftEnabled && currentRecipe != null && !isCrafting)
-        {
-            TryAutoCraft();
-        }
+        // Автоматический крафт, если есть рецепт
+        //if (currentRecipe != null && !isCrafting)
+        //{
+        //    TryCraft();
+        //}
 
         // Логика крафта
-        if (isCrafting)
-        {
-            craftingTimer += Time.deltaTime;
 
-            if (craftingProgress != null)
-            {
-                craftingProgress.value = Mathf.Clamp01(craftingTimer / currentRecipe.craftingTime);
-            }
-
-            if (craftingTimer >= currentRecipe.craftingTime)
-            {
-                CompleteCrafting();
-            }
-        }
-    }
-
-    private void TryAutoCraft()
-    {
-        if (CanCraft())
-        {
-            StartCrafting();
-        }
-    }
-
-    public void SetAutoCraft(bool enabled)
-    {
-        isAutoCraftEnabled = enabled;
-        // Если включаем автокрафт и есть рецепт - сразу пробуем крафтить
-        if (enabled && currentRecipe != null)
-        {
-            TryAutoCraft();
-        }
     }
 
     public override void interaction()
@@ -149,8 +108,6 @@ public class CraftingBuilding : Building
         if (currentRecipe != null)
         {
             ShowCraftingUI();
-            // Обновляем состояние переключателя при открытии
-            //autoCraftToggle.isOn = isAutoCraftEnabled;
         }
         else
         {
@@ -199,10 +156,7 @@ public class CraftingBuilding : Building
         ShowCraftingUI();
         SetupSlotsForRecipe(recipe);
 
-        // При выборе нового рецепта включаем автокрафт
-        isAutoCraftEnabled = true;
-        //autoCraftToggle.isOn = true;
-        TryAutoCraft();
+        TryCraft();
     }
 
     private void SetupSlotsForRecipe(CraftingRecipe recipe)
@@ -286,18 +240,11 @@ public class CraftingBuilding : Building
         {
             craftingProgress.gameObject.SetActive(false);
         }
-
-        // После завершения крафта сразу пробуем крафтить снова, если автокрафт включен
-        if (isAutoCraftEnabled)
-        {
-            TryAutoCraft();
-        }
     }
 
     private void ReturnToSelection()
     {
         ReturnItemsToInventory();
-        isAutoCraftEnabled = false;
         //autoCraftToggle.isOn = false;
         currentRecipe = null;
         ShowSelectionUI();
@@ -332,6 +279,14 @@ public class CraftingBuilding : Building
             {
                 outputSlot.Clear();
             }
+        }
+    }
+
+    private void TryCraft()
+    {
+        if (CanCraft())
+        {
+            StartCrafting();
         }
     }
 
