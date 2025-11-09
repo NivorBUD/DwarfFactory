@@ -34,6 +34,7 @@ public abstract class BaseCraftingSystem : MonoBehaviour
     public virtual void QueueCraft(CraftingRecipe recipe)
     {
         if (recipe == null) return;
+
         craftingQueue.Enqueue(new CraftingTask(recipe));
         OnQueueCountChanged?.Invoke(craftingQueue.Count);
 
@@ -41,10 +42,6 @@ public abstract class BaseCraftingSystem : MonoBehaviour
         {
             StartCoroutine(ProcessQueue());
         }
-
-        craftingQueue.Enqueue(new CraftingTask(recipe));
-        if (!isCrafting)
-            StartCoroutine(ProcessQueue());
     }
 
     protected abstract bool HasRequiredItems(CraftingRecipe recipe);
@@ -70,26 +67,30 @@ public abstract class BaseCraftingSystem : MonoBehaviour
                 continue;
             }
 
+            OnCraftStarted?.Invoke(recipe);
             RemoveIngredients(recipe);
 
             float timer = 0f;
             task.Progress = 0f;
+
             while (timer < recipe.craftingTime)
             {
                 timer += Time.deltaTime;
                 task.Progress = Mathf.Clamp01(timer / recipe.craftingTime);
-                OnCraftProgress(task);
+                OnCraftProgress?.Invoke(task);
                 yield return null;
             }
 
             AddResult(recipe);
-            OnCraftCompleted(task);
+            OnCraftCompleted?.Invoke(task);
             craftingQueue.Dequeue();
         }
 
         isCrafting = false;
-        yield return new WaitForSeconds(0.1f);
     }
 
+    protected void ClearQueue()
+    {
 
+    }
 }

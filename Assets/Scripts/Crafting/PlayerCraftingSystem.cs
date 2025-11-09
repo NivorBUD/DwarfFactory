@@ -7,6 +7,19 @@ public class PlayerCraftingSystem : BaseCraftingSystem
     private void Awake()
     {
         Instance = this;
+        foreach (var slot in InventoryManager.Instance.ui.GetCraftingPanel().GetComponentsInChildren<CraftingSlot>())
+        {
+            OnCraftProgress += slot.UpdateProgress;
+            OnCraftCompleted += slot.RefreshAmountText;
+        }
+    }
+
+    public override void QueueCraft(CraftingRecipe recipe)
+    {
+        if (craftingQueue.Count != 0) return;
+            
+        base.QueueCraft(recipe);
+
     }
 
     protected override bool HasRequiredItems(CraftingRecipe recipe)

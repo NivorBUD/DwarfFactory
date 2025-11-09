@@ -11,12 +11,11 @@ public class CraftingSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Image progressOverlay; // полупрозрачная заливка прогресса
     [SerializeField] private TextMeshProUGUI amountText;
 
-    private bool isCrafting = false;
-
     private void Start()
     {
-        if (recipe != null)
-            SetRecipe(recipe);
+        SetRecipe(recipe);
+
+        progressOverlay.color = Color.clear;
     }
 
     public void SetRecipe(CraftingRecipe newRecipe)
@@ -32,11 +31,13 @@ public class CraftingSlot : MonoBehaviour, IPointerClickHandler
 
         itemImage.sprite = recipe.resultItem.icon;
         itemImage.color = Color.white;
-        RefreshAmountText();
+        RefreshAmountText(null);
     }
 
-    public void RefreshAmountText()
+    public void RefreshAmountText(CraftingTask task)
     {
+        if (recipe == null) return;
+
         int maxCrafts = InventoryManager.Instance != null
             ? InventoryManager.Instance.CalculateMaxCrafts(recipe)
             : 0;
@@ -46,30 +47,14 @@ public class CraftingSlot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (recipe == null || isCrafting)
+        if (recipe == null)
             return;
 
         PlayerCraftingSystem.Instance.QueueCraft(recipe);
-        StartCoroutine(ShowProgress(recipe.craftingTime));
     }
 
-    private IEnumerator ShowProgress(float duration)
+    public void UpdateProgress(CraftingTask task)
     {
-        isCrafting = true;
-        float t = 0f;
-        progressOverlay.fillAmount = 0f;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            progressOverlay.fillAmount = t / duration;
-            yield return null;
-        }
-
-        progressOverlay.fillAmount = 1f;
-        yield return new WaitForSeconds(0.1f);
-        progressOverlay.fillAmount = 0f;
-        isCrafting = false;
-        RefreshAmountText();
+        progressOverlay.color = new Color(1, 0.3f, 0.3f, 1 - task.Progress);
     }
 }

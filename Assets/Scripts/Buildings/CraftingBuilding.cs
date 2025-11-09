@@ -27,24 +27,23 @@ public class CraftingBuilding : Building
     [SerializeField] private GameObject specificItemSlotPrefab;
     [SerializeField] private Button backToSelectionButton;
     [SerializeField] private Button closeUIButton;
-    [SerializeField] private Slider craftingProgress;
     [SerializeField] private GameObject InventorySlots;
+
+    public Slider craftingProgress;
 
     [Header("Recipe Selection")]
     public CraftingRecipe[] availableRecipes;
     public Transform recipesContainer;
 
     private CraftingRecipe currentRecipe;
-    private bool isCrafting = false;
     private List<SpecificItemSlot> inputSlots = new();
-    private float craftingTimer = 0f;
     private bool isUIOpen = false;
 
     private BuildingCraftingSystem craftingSystem;
-    private CraftingBuildingUI ui;
 
     private void Awake()
     {
+        craftingSystem = GetComponent<BuildingCraftingSystem>();
         backToSelectionButton.onClick.AddListener(ReturnToSelection);
         closeUIButton.onClick.AddListener(CloseUI);
     }
@@ -73,18 +72,6 @@ public class CraftingBuilding : Building
         {
             CloseUI();
         }
-    }
-
-    private void Update()
-    {
-        // Автоматический крафт, если есть рецепт
-        //if (currentRecipe != null && !isCrafting)
-        //{
-        //    TryCraft();
-        //}
-
-        // Логика крафта
-
     }
 
     public override void interaction()
@@ -118,10 +105,10 @@ public class CraftingBuilding : Building
     public void CloseUI()
     {
         isUIOpen = false;
+        mainUI.SetActive(false);
         selectionUI.SetActive(false);
         craftingUI.SetActive(false);
         InventorySlots.SetActive(false);
-        ReturnItemsToInventory();
     }
 
     private void ShowSelectionUI()
@@ -156,7 +143,10 @@ public class CraftingBuilding : Building
         ShowCraftingUI();
         SetupSlotsForRecipe(recipe);
 
-        TryCraft();
+        if (CanCraft())
+        {
+            craftingSystem.QueueCraft(recipe);
+        }
     }
 
     private void SetupSlotsForRecipe(CraftingRecipe recipe)
@@ -165,6 +155,7 @@ public class CraftingBuilding : Building
         {
             Destroy(slot.gameObject);
         }
+
         inputSlots.Clear();
         outputSlot.Clear();
 
@@ -177,75 +168,57 @@ public class CraftingBuilding : Building
         }
     }
 
-    private bool CanCraft()
+    public bool HasItemInInputSlots(ItemScriptableObject item, int amount)
     {
-        if (currentRecipe == null) return false;
-
-        for (int i = 0; i < currentRecipe.ingredients.Count; i++)
+        int total = 0;
+        foreach (var slot in inputSlots)
         {
-            var ingredient = currentRecipe.ingredients[i];
-            if (i >= inputSlots.Count ||
-                inputSlots[i].Item != ingredient.item ||
-                inputSlots[i].Amount < ingredient.amount)
+            if (slot.Item == item)
+                total += slot.Amount;
+        }
+        return total >= amount;
+    }
+
+    public void ConsumeInputItems(CraftingRecipe recipe)
+    {
+        for (int i = 0; i < recipe.ingredients.Count; i++)
+        {
+            var ing = recipe.ingredients[i];
+            int remain = ing.amount;
+            foreach (var slot in inputSlots)
             {
-                return false;
+                if (slot.Item == ing.item && remain > 0)
+                {
+                    int taken = Mathf.Min(slot.Amount, remain);
+                    slot.RemoveAmount(taken);
+                    remain -= taken;
+                }
             }
         }
+    } 
 
-        if (outputSlot.Item != null &&
-            (outputSlot.Item != currentRecipe.resultItem ||
-             outputSlot.EmptyAmount < currentRecipe.resultAmount))
-        {
+    public bool CanOutput(CraftingRecipe recipe)
+    {
+        if (outputSlot.IsEmpty)
+            return true;
+
+        if (outputSlot.Item != recipe.resultItem)
             return false;
-        }
 
-        return true;
+        return outputSlot.EmptyAmount >= recipe.resultAmount;
     }
 
-    private void StartCrafting()
+    public void AddOutputItem(CraftingRecipe recipe)
     {
-        isCrafting = true;
-        craftingTimer = 0f;
-
-        if (craftingProgress != null)
-        {
-            craftingProgress.gameObject.SetActive(true);
-            craftingProgress.value = 0f;
-        }
-    }
-
-    private void CompleteCrafting()
-    {
-        for (int i = 0; i < currentRecipe.ingredients.Count; i++)
-        {
-            if (i < inputSlots.Count)
-            {
-                inputSlots[i].RemoveAmount(currentRecipe.ingredients[i].amount);
-            }
-        }
-
-        if (outputSlot.Item == null)
-        {
-            outputSlot.Set(currentRecipe.resultItem, currentRecipe.resultAmount);
-        }
+        if (outputSlot.IsEmpty)
+            outputSlot.Set(recipe.resultItem, recipe.resultAmount);
         else
-        {
-            outputSlot.AddAmount(currentRecipe.resultAmount);
-        }
-
-        isCrafting = false;
-        craftingTimer = 0f;
-
-        if (craftingProgress != null)
-        {
-            craftingProgress.gameObject.SetActive(false);
-        }
+            outputSlot.AddAmount(recipe.resultAmount);
     }
 
     private void ReturnToSelection()
     {
         ReturnItemsToInventory();
-        //autoCraftToggle.isOn = false;
         currentRecipe = null;
         ShowSelectionUI();
     }
@@ -256,38 +229,30 @@ public class CraftingBuilding : Building
         {
             if (!slot.IsEmpty)
             {
-                int remaining = InventoryManager.Instance.AddItemsToInventory(slot.Item, slot.Amount);
-                if (remaining > 0)
-                {
-                    slot.Set(slot.Item, remaining);
-                }
-                else
-                {
+                int remain = InventoryManager.Instance.AddItemsToInventory(slot.Item, slot.Amount);
+                if (remain <= 0) 
                     slot.Clear();
-                }
             }
         }
-
         if (!outputSlot.IsEmpty)
         {
-            int remaining = InventoryManager.Instance.AddItemsToInventory(outputSlot.Item, outputSlot.Amount);
-            if (remaining > 0)
-            {
-                outputSlot.Set(outputSlot.Item, remaining);
-            }
-            else
-            {
+            int remain = InventoryManager.Instance.AddItemsToInventory(outputSlot.Item, outputSlot.Amount);
+            if (remain <= 0) 
                 outputSlot.Clear();
-            }
         }
     }
 
-    private void TryCraft()
+    private bool CanCraft()
     {
-        if (CanCraft())
-        {
-            StartCrafting();
-        }
+        return craftingSystem != null && craftingSystem.enabled && HasAllIngredients() && CanOutput(currentRecipe);
+    }
+
+    private bool HasAllIngredients()
+    {
+        foreach (var ing in currentRecipe.ingredients)
+            if (!HasItemInInputSlots(ing.item, ing.amount))
+                return false;
+        return true;
     }
 
     private void OnDestroy()

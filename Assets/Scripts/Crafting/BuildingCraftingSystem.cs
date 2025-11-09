@@ -5,47 +5,38 @@ using UnityEngine;
 
 public class BuildingCraftingSystem : BaseCraftingSystem
 {
-    public int GetQueueCount() => craftingQueue.Count;
-
-    public CraftingTask GetCurrentTask() => craftingQueue.Count > 0 ? craftingQueue.Peek() : null;
-
-    private Coroutine processCoroutine;
-
     private CraftingBuilding building;
 
     private void Awake()
     {
-        OnCraftProgress += ProgressCraft;
-        OnCraftCompleted += CompleteCraft;
         if (!TryGetComponent<CraftingBuilding>(out building))
         {
             Debug.LogError("[BuildingCraftingSystem] Не найден CraftingBuilding на объекте!");
         }
+
+        OnCraftProgress += UpdateProgress;
+        OnCraftCompleted += HandleComplete;
     }
 
-    /// <summary>
-    /// Очистить очередь и остановить обработку.
-    /// </summary>
-    public void ClearQueue()
+    private void UpdateProgress(CraftingTask task)
     {
-        craftingQueue.Clear();
-        OnQueueCountChanged(0);
-        if (isCrafting)
+        if (building.craftingProgress != null)
         {
-            StopCoroutine(processCoroutine);
-            processCoroutine = null;
+            building.craftingProgress.value = task.Progress;
         }
     }
 
-    
-    private void ProgressCraft(CraftingTask task)
+    private void HandleComplete(CraftingTask task)
     {
+        // Скрыть прогресс при завершении
+        if (building.craftingProgress != null)
+            building.craftingProgress.value = 0f;
 
-    }
-
-    private void CompleteCraft(CraftingTask task)
-    {
-
+        // Проверяем ресурсы — повторяем крафт если возможно
+        if (HasRequiredItems(task.Recipe))
+        {
+            QueueCraft(task.Recipe);
+        }
     }
 
     protected override bool HasRequiredItems(CraftingRecipe recipe)
@@ -54,23 +45,38 @@ public class BuildingCraftingSystem : BaseCraftingSystem
 
         foreach (var ingredient in recipe.ingredients)
         {
-            if (building.CountItem(ingredient.item) < ingredient.amount)
+            if (!building.HasItemInInputSlots(ingredient.item, ingredient.amount))
                 return false;
         }
+        if (!building.CanOutput(recipe))
+            return false;
+        
         return true;
     }
 
     protected override void RemoveIngredients(CraftingRecipe recipe)
     {
-        if (building == null) return;
-
-        foreach (var ingredient in recipe.ingredients)
-            building.RemoveItems(ingredient.item, ingredient.amount);
+        building.ConsumeInputItems(recipe);
     }
 
     protected override void AddResult(CraftingRecipe recipe)
     {
-        if (building == null) return;
-        building.AddItem(recipe.resultItem, recipe.resultAmount);
+        building.AddOutputItem(recipe);
     }
+
+
+
+    /// <summary>
+    /// Очистить очередь и остановить обработку.
+    /// </summary>
+    //public void ClearQueue()
+    //{
+    //    craftingQueue.Clear();
+    //    OnQueueCountChanged(0);
+    //    if (isCrafting)
+    //    {
+    //        StopCoroutine(processCoroutine);
+    //        processCoroutine = null;
+    //    }
+    //}
 }
