@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 6760433318147206284}
   - component: {fileID: 8656635774276563602}
   - component: {fileID: 6998616974020038890}
-  - component: {fileID: 6005536008824303156}
+  - component: {fileID: 6630725603770877991}
   m_Layer: 5
   m_Name: Quick slot
   m_TagString: Untagged
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 0.5
---- !u!114 &6005536008824303156
+--- !u!114 &6630725603770877991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -369,10 +369,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8618516370769258976}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370947dad92502d4fb6130d8dc6c4165, type: 3}
+  m_Script: {fileID: 11500000, guid: ddded01176f91034f90bacbb48ec5c00, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  BGImage: {fileID: 0}
-  iconImage: {fileID: 0}
-  textAmount: {fileID: 0}
-  isEmpty: 1
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
