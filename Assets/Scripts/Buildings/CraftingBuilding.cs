@@ -59,13 +59,34 @@ public class CraftingBuilding : Building
         //autoCraftToggle.onValueChanged.AddListener(SetAutoCraft);
     }
 
-    private void Update()
+    protected override void OnEnable()
     {
-        if (isUIOpen && Input.GetKeyDown(KeyCode.E))
+        base.OnEnable();
+        if (InputHandler.Instance != null)
+        {
+            InputHandler.Instance.OnInventoryToggle += HandleInventoryToggleInCrafting;
+        }
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        if (InputHandler.Instance != null)
+        {
+            InputHandler.Instance.OnInventoryToggle -= HandleInventoryToggleInCrafting;
+        }
+    }
+
+    private void HandleInventoryToggleInCrafting()
+    {
+        if (isUIOpen)
         {
             CloseUI();
         }
+    }
 
+    private void Update()
+    {
         // Автоматический крафт, если включен и есть рецепт
         if (isAutoCraftEnabled && currentRecipe != null && !isCrafting)
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 public class BuildingsGrid : MonoBehaviour
@@ -39,10 +40,13 @@ public class BuildingsGrid : MonoBehaviour
     {
         if (flyingBuilding != null)
         {
-            Vector3 MousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            if (Mouse.current == null) return;
+
+            Vector3 MousePos = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Vector3Int pos = grid.WorldToCell(MousePos);
             flyingBuilding.transform.position = new Vector3Int(pos.x + 1, pos.y + 1, 0);
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             { 
                 bool canPlace = CheckToPlaceBuilding(pos);
                 if (canPlace)

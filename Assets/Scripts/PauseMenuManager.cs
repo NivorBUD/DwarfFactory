@@ -8,18 +8,31 @@ public class PauseMenuManager : MonoBehaviour
     public static bool GameIsPaused = false;
     public GameObject PauseMenuUI;
 
-    void Update()
+    private void OnEnable()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (InputHandler.Instance != null)
         {
-            if (GameIsPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
+            InputHandler.Instance.OnPauseToggle += HandlePauseToggle;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (InputHandler.Instance != null)
+        {
+            InputHandler.Instance.OnPauseToggle -= HandlePauseToggle;
+        }
+    }
+
+    private void HandlePauseToggle()
+    {
+        if (GameIsPaused)
+        {
+            Resume();
+        }
+        else
+        {
+            Pause();
         }
     }
     public void Resume()

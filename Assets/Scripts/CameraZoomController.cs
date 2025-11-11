@@ -5,76 +5,76 @@ using Unity.Cinemachine;
 public class CameraZoomController : MonoBehaviour
 {
     [Header("Zoom Settings")]
-    [SerializeField] private CinemachineCamera virtualCamera; // Ссылка на Cinemachine 2D Camera
-    [SerializeField] private float minZoom = 4f; // Минимальный ортографический размер
-    [SerializeField] private float maxZoom = 6f; // Максимальный ортографический размер
-    [SerializeField] private float zoomSensitivity = 0.2f; // Чувствительность для мыши
-    [SerializeField] private float zoomSmoothness = 10f; // Скорость сглаживания зума
+    [SerializeField] private CinemachineCamera virtualCamera; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Cinemachine 2D Camera
+    [SerializeField] private float minZoom = 4f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private float maxZoom = 6f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private float zoomSensitivity = 0.2f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private float zoomSmoothness = 10f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-    private InputSystem_Actions controls; // Карта управления
-    private float zoomInput; // Ввод зума от мыши
-    private float targetOrthoSize; // Целевой размер зума
-    private float currentOrthoSize; // Текущий размер зума
+    private InputSystem_Actions controls;
+    private float targetOrthoSize;
+    private float currentOrthoSize;
 
     private void Awake()
     {
-        // Инициализация Input System
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Input System
         controls = new InputSystem_Actions();
 
-        // Проверка CinemachineCamera
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CinemachineCamera
         if (virtualCamera == null)
         {
             Debug.LogError("CinemachineCamera not assigned in Inspector!");
             return;
         }
 
-        // Инициализация начального зума
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         targetOrthoSize = virtualCamera.Lens.OrthographicSize;
         currentOrthoSize = targetOrthoSize;
     }
 
     private void OnEnable()
     {
-        // Подписка на ввод зума
-        controls.Player.Zoom.performed += OnZoom;
-        controls.Player.Zoom.canceled += OnZoom;
         controls.Player.Enable();
     }
 
     private void OnDisable()
     {
-        // Отписка от ввода
-        controls.Player.Zoom.performed -= OnZoom;
-        controls.Player.Zoom.canceled -= OnZoom;
         controls.Player.Disable();
-    }
-
-    private void OnZoom(InputAction.CallbackContext context)
-    {
-        // Получение значения зума от колеса мыши (scroll.y: положительное для прокрутки вверх, отрицательное для вниз)
-        Vector2 input = context.ReadValue<Vector2>();
-        zoomInput = input.y;
-
     }
 
     private void Update()
     {
         if (virtualCamera == null) return;
 
-        // Обработка ввода зума от колеса мыши
-        if (zoomInput != 0f)
+        bool zoomChanged = false;
+
+        // РћР±СЂР°Р±РѕС‚РєР° Р·СѓРјР° РЅР° РєР»Р°РІРёС€Рё - Рё +
+        if (Keyboard.current != null)
         {
-            // Вычисляем изменение зума (прокрутка вверх = уменьшение orthoSize, вниз = увеличение)
-            float zoomDelta = -zoomInput * zoomSensitivity;
-            targetOrthoSize = Mathf.Clamp(targetOrthoSize + zoomDelta, minZoom, maxZoom);
+            // Р—СѓРј OUT (РѕС‚РґР°Р»РёС‚СЊ) - РєР»Р°РІРёС€Р° Minus
+            if (Keyboard.current.minusKey.isPressed || Keyboard.current.numpadMinusKey.isPressed)
+            {
+                targetOrthoSize = Mathf.Clamp(targetOrthoSize + zoomSensitivity * Time.deltaTime * 10f, minZoom, maxZoom);
+                zoomChanged = true;
+            }
+            
+            // Р—СѓРј IN (РїСЂРёР±Р»РёР·РёС‚СЊ) - РєР»Р°РІРёС€Р° Plus (Equals Р±РµР· Shift)
+            if (Keyboard.current.equalsKey.isPressed || Keyboard.current.numpadPlusKey.isPressed)
+            {
+                targetOrthoSize = Mathf.Clamp(targetOrthoSize - zoomSensitivity * Time.deltaTime * 10f, minZoom, maxZoom);
+                zoomChanged = true;
+            }
         }
 
-        // Плавное сглаживание зума
-        currentOrthoSize = Mathf.Lerp(currentOrthoSize, targetOrthoSize, zoomSmoothness * Time.deltaTime);
+        // РџР»Р°РІРЅРѕРµ РїСЂРёР±Р»РёР¶РµРЅРёРµ Рє С†РµР»РµРІРѕРјСѓ Р·СѓРјСѓ
+        if (zoomChanged || Mathf.Abs(currentOrthoSize - targetOrthoSize) > 0.001f)
+        {
+            currentOrthoSize = Mathf.Lerp(currentOrthoSize, targetOrthoSize, zoomSmoothness * Time.deltaTime);
 
-        // Обновление Lens
-        var lens = virtualCamera.Lens;
-        lens.OrthographicSize = currentOrthoSize;
-        virtualCamera.Lens = lens;
+            // РџСЂРёРјРµРЅСЏРµРј Рє РєР°РјРµСЂРµ РўРћР›Р¬РљРћ РµСЃР»Рё РёР·РјРµРЅРёР»РѕСЃСЊ
+            var lens = virtualCamera.Lens;
+            lens.OrthographicSize = currentOrthoSize;
+            virtualCamera.Lens = lens;
+        }
     }
 }

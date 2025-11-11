@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
 abstract public class Building : MonoBehaviour
@@ -19,17 +20,32 @@ abstract public class Building : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    protected virtual void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (InputHandler.Instance != null)
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+            InputHandler.Instance.OnBuildingInteract += HandleInteraction;
+        }
+    }
 
-            if (hit.collider != null && hit.collider.gameObject == gameObject)
-            {
-                interaction();
-            }
+    protected virtual void OnDisable()
+    {
+        if (InputHandler.Instance != null)
+        {
+            InputHandler.Instance.OnBuildingInteract -= HandleInteraction;
+        }
+    }
+
+    private void HandleInteraction()
+    {
+        if (Mouse.current == null) return;
+
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+        if (hit.collider != null && hit.collider.gameObject == gameObject)
+        {
+            interaction();
         }
     }
 
