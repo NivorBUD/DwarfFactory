@@ -61,6 +61,8 @@ public class InventoryUI : MonoBehaviour
         UIPanel.SetActive(!IsInventoryOpened);
     }
 
+    public GameObject GetCraftingPanel() => craftingPanel;
+
     //public void Refresh()
     //{
     //    // очищаем старые
