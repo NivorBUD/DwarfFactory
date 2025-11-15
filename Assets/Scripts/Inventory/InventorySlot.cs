@@ -18,6 +18,18 @@ public class InventorySlot : MonoBehaviour
 
     //public bool IsEmpty = true;
 
+    public InventorySlot Copy()
+    {
+        InventorySlot newSlot = new();
+        newSlot.BGImage = BGImage;
+        newSlot.iconImage = iconImage;
+        newSlot.textAmount = textAmount;
+        newSlot.Item = Item;
+        newSlot.Amount = Amount;
+
+        return newSlot;
+    }
+
     private void Awake()
     {
         if (!BGImage) BGImage = GetComponent<Image>();

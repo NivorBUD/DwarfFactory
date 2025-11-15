@@ -48,17 +48,27 @@ public class InventoryUI : MonoBehaviour
     {
         inventory.SetActive(!IsInventoryOpened);
         closeButton.SetActive(!IsInventoryOpened);
-        craftingPanel.SetActive(!IsInventoryOpened);
-
-        // зависит от открытия сундука
-        //chestInventory.SetActive(IsChestOpened ? !IsInventoryOpened : false);
-        //quickSlots.SetActive(IsChestOpened ? !IsInventoryOpened : true);
-        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
         
 
-        IsChestOpened = false;
+        // зависит от открытия сундука
+        chestInventory.SetActive(IsChestOpened ? !IsInventoryOpened : false);
+        craftingPanel.SetActive(!chestInventory.activeSelf);
+        //chestAndCraftingBuildingBG.SetActive(IsChestOpened ? !IsInventoryOpened : false);
+        //quickSlots.SetActive(IsChestOpened ? !IsInventoryOpened : true);
+        //inventory.transform.localPosition = new Vector3(0, IsChestOpened ? -250 : 0, 0);
+
+        
         // последним, потому что на него ориентируется IsInventoryOpened
+
+        
+        if (IsChestOpened && IsInventoryOpened)
+        {
+            InventoryManager.Instance.SaveChestInventory();
+            IsChestOpened = false;
+        }
+
         UIPanel.SetActive(!IsInventoryOpened);
+        
     }
 
     public GameObject GetCraftingPanel() => craftingPanel;

@@ -64,35 +64,6 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             ExchangeSlotData(eventData.pointerCurrentRaycast.gameObject.transform.parent.parent.GetComponent<InventorySlot>());
         }
-        else if (InputHandler.Instance != null && InputHandler.Instance.IsControlHeld && InventoryManager.Instance.IsChestOpened)
-        {
-            if (oldSlot.gameObject.GetComponent<ChestSlot>() != null)
-            {
-                int remained = InventoryManager.Instance.AddItemsToInventory(oldSlot.Item, oldSlot.Amount);
-                if (remained == 0)
-                {
-                    oldSlot.Clear();
-                }
-                else
-                {
-                    oldSlot.Set(oldSlot.Item, remained);
-                }
-            }
-            else
-            {
-                int remained = InventoryManager.Instance.AddToOpenedChest(oldSlot.Item, oldSlot.Amount);
-                if (remained == 0)
-                {
-                    oldSlot.Clear();
-                }
-                else
-                {
-                    oldSlot.Set(oldSlot.Item, remained);
-                }
-            }
-            InventoryManager.Instance.OpenedChest.
-                SetSlots(InventoryManager.Instance.GetChestInventorySlots().ToArray());
-        }
     }
 
     void ExchangeSlotData(InventorySlot newSlot) //newSlot - ���� �������������, oldSlot - ������ 
@@ -125,8 +96,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
         if (InventoryManager.Instance.IsChestOpened)
         {
-            InventoryManager.Instance.OpenedChest.
-                SetSlots(InventoryManager.Instance.GetChestInventorySlots().ToArray());
+            InventoryManager.Instance.SaveChestInventory();
         }
     }
 

@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class Chest : Building
 {
-    public ChestSlot[] Slots { get; private set; }
     private InventoryContainer inventoryContainer;
 
     private void Start()
@@ -28,36 +27,36 @@ public class Chest : Building
         }
     }
 
-    public void InizializeUISlotsFromParentObj(GameObject parent)
+    public void InizializeUISlotsFromSlotsList(List<InventorySlot> chestSlots)
     {
-        List<InventorySlot> slots = new ();
-        bool isSetSlot = inventoryContainer.Slots.Count == parent.transform.childCount;
-        for (int i = 0; i < parent.transform.childCount; i++)
+        bool isSlotsSet = inventoryContainer.Slots.Count == chestSlots.Count;
+        List<InventorySlot> slots = new();
+        for (int i = 0; i < chestSlots.Count; i++)
         {
-            if (parent.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
+            if (isSlotsSet)
             {
-                if (isSetSlot)
-                {
-                    slot.Set(inventoryContainer.Slots[i].Item, inventoryContainer.Slots[i].Amount);
-                }
-                else
-                {
-                    slots.Add(slot);
-                }
+                chestSlots[i].Set(inventoryContainer.Slots[i].Item, inventoryContainer.Slots[i].Amount);
+            }
+            else
+            {
+                chestSlots[i].Clear();
+                slots.Add(chestSlots[i].Copy());
             }
         }
-
-        inventoryContainer.SetNewSlots(slots);
+        if (!isSlotsSet)
+        {
+            inventoryContainer.SetNewSlots(slots);
+        }
     }
 
     public int AddItems(ItemScriptableObject item, int amount)
         => inventoryContainer.AddItems(item, amount);
 
-    public void SetSlots(InventorySlot[] newSlots)
+    public void SaveData(List<InventorySlot> newSlots)
     {
-        for (int i = 0; i < Slots.Length; i++)
+        for (int i = 0; i < inventoryContainer.Slots.Count; i++)
         {
-            Slots[i].PlaceItem(newSlots[i].Item, newSlots[i].Amount);
+            inventoryContainer.Slots[i].Set(newSlots[i].Item, newSlots[i].Amount);
         }
     }
 

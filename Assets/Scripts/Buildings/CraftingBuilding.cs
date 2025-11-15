@@ -33,7 +33,7 @@ public class CraftingBuilding : Building
 
     [Header("Recipe Selection")]
     public CraftingRecipe[] availableRecipes;
-    public Transform recipesContainer;
+    public GameObject recipesContainer;
 
     private CraftingRecipe currentRecipe;
     private List<SpecificItemSlot> inputSlots = new();
@@ -116,14 +116,14 @@ public class CraftingBuilding : Building
         craftingUI.SetActive(false);
         selectionUI.SetActive(true);
 
-        foreach (Transform child in recipesContainer)
+        foreach (Transform child in recipesContainer.transform)
         {
             Destroy(child.gameObject);
         }
 
         foreach (var recipe in availableRecipes)
         {
-            var slotObj = Instantiate(recipeItemSlotPrefab, recipesContainer);
+            var slotObj = Instantiate(recipeItemSlotPrefab, recipesContainer.transform);
             var slot = slotObj.GetComponent<RecipeSelectionSlot>();
             slot.SetRecipe(recipe);
             slot.OnClick += SelectRecipe;
