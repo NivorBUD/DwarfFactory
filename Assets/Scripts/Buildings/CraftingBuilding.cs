@@ -18,34 +18,26 @@ public class CraftingBuilding : Building
     public CraftingBuildingType buildingType;
 
     [Header("UI References")]
-    [SerializeField] private GameObject mainUI;
-    [SerializeField] private GameObject selectionUI;
-    [SerializeField] private GameObject craftingUI;
     [SerializeField] private Transform inputSlotsContainer;
     [SerializeField] private SpecificItemSlot outputSlot;
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
-    [SerializeField] private Button backToSelectionButton;
-    [SerializeField] private Button closeUIButton;
     [SerializeField] private GameObject InventorySlots;
 
     public Slider craftingProgress;
 
     [Header("Recipe Selection")]
-    public CraftingRecipe[] availableRecipes;
-    public GameObject recipesContainer;
+    public List<CraftingRecipe> AvailableRecipes { get; private set; }
 
     private CraftingRecipe currentRecipe;
     private List<SpecificItemSlot> inputSlots = new();
-    private bool isUIOpen = false;
+    public bool isSelectionCraft { get; private set; }
 
     private BuildingCraftingSystem craftingSystem;
 
     private void Awake()
     {
         craftingSystem = GetComponent<BuildingCraftingSystem>();
-        backToSelectionButton.onClick.AddListener(ReturnToSelection);
-        closeUIButton.onClick.AddListener(CloseUI);
     }
 
     protected override void OnEnable()
@@ -68,84 +60,47 @@ public class CraftingBuilding : Building
 
     private void HandleInventoryToggleInCrafting()
     {
-        if (isUIOpen)
+        if (InventoryManager.Instance.ui.IsCraftingBuildingOpened)
         {
-            CloseUI();
+            InventoryManager.Instance.OpenCraftingBuilding(this);
         }
     }
 
     public override void interaction()
     {
-        if (!isUIOpen)
-        {
-            OpenUI();
-        }
-        else
-        {
-            CloseUI();
-        }
-    }
-
-    private void OpenUI()
-    {
-        isUIOpen = true;
-        InventorySlots.SetActive(true);
-        mainUI.SetActive(true);
-
-        if (currentRecipe != null)
-        {
-            ShowCraftingUI();
-        }
-        else
-        {
-            ShowSelectionUI();
-        }
-    }
-
-    public void CloseUI()
-    {
-        isUIOpen = false;
-        mainUI.SetActive(false);
-        selectionUI.SetActive(false);
-        craftingUI.SetActive(false);
-        InventorySlots.SetActive(false);
-    }
-
-    private void ShowSelectionUI()
-    {
-        craftingUI.SetActive(false);
-        selectionUI.SetActive(true);
-
-        foreach (Transform child in recipesContainer.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        foreach (var recipe in availableRecipes)
-        {
-            var slotObj = Instantiate(recipeItemSlotPrefab, recipesContainer.transform);
-            var slot = slotObj.GetComponent<RecipeSelectionSlot>();
-            slot.SetRecipe(recipe);
-            slot.OnClick += SelectRecipe;
-        }
-    }
-
-    private void ShowCraftingUI()
-    {
-        selectionUI.SetActive(false);
-        craftingUI.SetActive(true);
+        InventoryManager.Instance.OpenCraftingBuilding(this);
     }
 
     public void SelectRecipe(CraftingRecipe recipe)
     {
+        isSelectionCraft = false;
         currentRecipe = recipe;
         outputSlot.SetAllowedItem(recipe.resultItem);
-        ShowCraftingUI();
         SetupSlotsForRecipe(recipe);
 
         if (CanCraft())
         {
             craftingSystem.QueueCraft(recipe);
+        }
+
+        InventoryManager.Instance.ui.ShowCraftCraftingBuildingUI();
+        
+    }
+
+    public void SetupRecipesSlots(GameObject recipesContainer)
+    {
+        isSelectionCraft = true;
+        foreach (Transform child in recipesContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (var recipe in AvailableRecipes)
+        {
+            var slotObj = Instantiate(recipeItemSlotPrefab, recipesContainer.transform);
+            var slot = slotObj.GetComponent<RecipeSelectionSlot>();
+            slot.SetRecipe(recipe);
+            slot.OnClick += SelectRecipe;
         }
     }
 
@@ -216,15 +171,9 @@ public class CraftingBuilding : Building
             outputSlot.AddAmount(recipe.resultAmount);
     }
 
-    private void ReturnToSelection()
+    public void ReturnItemsToInventory()
     {
-        ReturnItemsToInventory();
         currentRecipe = null;
-        ShowSelectionUI();
-    }
-
-    private void ReturnItemsToInventory()
-    {
         foreach (var slot in inputSlots)
         {
             if (!slot.IsEmpty)

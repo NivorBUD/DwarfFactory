@@ -200,6 +200,7 @@ public class InventoryManager : MonoBehaviour
     public void OpenCraftingBuilding(CraftingBuilding building)
     {
         OpenedCraftingBuilding = building;
+        ui.OpenCraftingBuilding();
     }
 
     public void CloseInventoryFromButton()
