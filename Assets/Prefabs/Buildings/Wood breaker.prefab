@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3133139596501772806}
   - component: {fileID: 7496006812969807111}
   - component: {fileID: 1662886543579577036}
+  - component: {fileID: 5327376125664769300}
   m_Layer: 0
   m_Name: Wood breaker
   m_TagString: Untagged
@@ -48,19 +49,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: {x: 4, y: 4}
   buildingType: 4
-  mainUI: {fileID: 0}
-  selectionUI: {fileID: 0}
-  craftingUI: {fileID: 0}
-  inputSlotsContainer: {fileID: 0}
   outputSlot: {fileID: 0}
   recipeItemSlotPrefab: {fileID: 5121522981275796360, guid: 083bf89a4aed0754486eefbc39e88a4e, type: 3}
   specificItemSlotPrefab: {fileID: 5121522981275796360, guid: 3a2ddc12f9fd21143932d10e2b5b17e8, type: 3}
-  backToSelectionButton: {fileID: 0}
-  closeUIButton: {fileID: 0}
-  craftingProgress: {fileID: 0}
   InventorySlots: {fileID: 0}
-  availableRecipes: []
-  recipesContainer: {fileID: 0}
+  craftingProgress: {fileID: 0}
+  AvailableRecipes:
+  - {fileID: 11400000, guid: d60aa8b01db7c5b4098626234eebee7f, type: 2}
+  - {fileID: 11400000, guid: c1fe8ef5a9981454d85c9b8bda98f4a0, type: 2}
 --- !u!61 &1662886543579577036
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -107,6 +103,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &5327376125664769300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5402483036013810792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79e8d7499f73441ae98afe408cd0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingCraftingSystem
 --- !u!1 &7664772529822768022
 GameObject:
   m_ObjectHideFlags: 0

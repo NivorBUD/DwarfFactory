@@ -66,8 +66,14 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
     }
 
-    void ExchangeSlotData(InventorySlot newSlot) //newSlot - ���� �������������, oldSlot - ������ 
+    void ExchangeSlotData(InventorySlot newSlot) //newSlot - to, oldSlot - from 
     {
+        if (newSlot.gameObject.TryGetComponent<SpecificItemSlot>(out var specSlot))
+        {
+            if (specSlot.AllowedItem != oldSlot.Item)
+                return;
+        }
+
         if (oldSlot == newSlot)
         {
             return;
@@ -105,6 +111,7 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         newSlot.Set(oldSlot.Item, oldSlot.Amount);
 
         oldSlot.Set(item, amount);
+        
         if (isEmpty)
         {
             oldSlot.Clear();
@@ -116,13 +123,16 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         if (newSlot.IsEmpty)
         {
             newSlot.Set(oldSlot.Item, amount);
+
             oldSlot.Set(oldSlot.Item, oldSlot.Amount - amount);
+
             return;
         }
         
         if (newSlot.EmptyAmount > amount)
         {
             newSlot.AddAmount(amount);
+
             if (!(isOne || isHalf))
             {
                 oldSlot.Clear();
