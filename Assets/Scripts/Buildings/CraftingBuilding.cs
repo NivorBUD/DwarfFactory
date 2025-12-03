@@ -124,6 +124,11 @@ public class CraftingBuilding : Building
             Destroy(slot.gameObject);
         }
 
+        if (InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>())
+        {
+            Destroy(InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>().gameObject);
+        }
+
         List<SpecificItemSlot> slots = new();
         foreach (RecipeIngredient ingridient in currentRecipe.ingredients)  
         {
@@ -133,6 +138,10 @@ public class CraftingBuilding : Building
             slots.Add(slot);
         }
 
+        SpecificItemSlot outSlot = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.OutputSlotObject).GetComponent<SpecificItemSlot>();
+        outSlot.SetAllowedItem(outputSlot.AllowedItem);
+
+        outSlot.Set(outputSlot.Item, outputSlot.Amount);
 
         bool isSlotsSet = inputSlots.Count == slots.Count;
         List<SpecificItemSlot> slotsToSave = new();
@@ -161,7 +170,7 @@ public class CraftingBuilding : Building
             inputSlots[i].Set(newSlots[i].Item, newSlots[i].Amount);
         }
 
-        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlot;
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
         for (int i = 0; i < inputSlots.Count; i++)
         {
             outputSlot.Set(outUiSlot.Item, outUiSlot.Amount);
@@ -176,7 +185,7 @@ public class CraftingBuilding : Building
             newSlots[i].Set(inputSlots[i].Item, inputSlots[i].Amount);
         }
 
-        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlot;
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
         for (int i = 0; i < inputSlots.Count; i++)
         {
             outUiSlot.Clear();
@@ -209,7 +218,10 @@ public class CraftingBuilding : Building
                     int taken = Mathf.Min(slot.Amount, remain);
                     slot.RemoveAmount(taken);
                     remain -= taken;
-                    DownloadDataInUi();
+                    if (InventoryManager.Instance.OpenedCraftingBuilding == this)
+                    {
+                        DownloadDataInUi();
+                    }
                 }
             }
         }
@@ -233,7 +245,10 @@ public class CraftingBuilding : Building
         else
             outputSlot.AddAmount(recipe.resultAmount);
 
-        DownloadDataInUi();
+        if (InventoryManager.Instance.OpenedCraftingBuilding == this)
+        {
+            DownloadDataInUi();
+        }
     }
 
     public void ReturnItemsToInventory()

@@ -12,7 +12,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject craftingUI;
     [SerializeField] private GameObject buildingsUI;
     [SerializeField] private Transform inputSlotsContainer;
-    [SerializeField] private SpecificItemSlot outputSlot;
+    [SerializeField] private Transform outputSlotObject;
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
     [SerializeField] public Slider craftingProgress;
@@ -34,7 +34,7 @@ public class InventoryUI : MonoBehaviour
     public bool IsCraftingBuildingOpened { get; private set; }
 
     public Transform InputSlotsContainer => inputSlotsContainer;
-    public SpecificItemSlot OutputSlot => outputSlot;
+    public Transform OutputSlotObject => outputSlotObject;
 
     private InventoryContainer container;
 
