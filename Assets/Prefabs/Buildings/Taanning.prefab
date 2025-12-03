@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7968444917894613348}
   - component: {fileID: 1951868866904381742}
   - component: {fileID: 7005393657147260016}
+  - component: {fileID: -3856047578355735507}
   m_Layer: 0
   m_Name: Taanning
   m_TagString: Untagged
@@ -48,19 +49,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: {x: 4, y: 4}
   buildingType: 2
-  mainUI: {fileID: 0}
-  selectionUI: {fileID: 0}
-  craftingUI: {fileID: 0}
-  inputSlotsContainer: {fileID: 0}
   outputSlot: {fileID: 0}
   recipeItemSlotPrefab: {fileID: 0}
   specificItemSlotPrefab: {fileID: 0}
-  backToSelectionButton: {fileID: 0}
-  closeUIButton: {fileID: 0}
-  craftingProgress: {fileID: 0}
   InventorySlots: {fileID: 0}
-  availableRecipes: []
-  recipesContainer: {fileID: 0}
+  craftingProgress: {fileID: 0}
+  AvailableRecipes: []
 --- !u!61 &7005393657147260016
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -107,6 +101,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &-3856047578355735507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036754880767154416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79e8d7499f73441ae98afe408cd0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingCraftingSystem
 --- !u!1 &6484742408909256622
 GameObject:
   m_ObjectHideFlags: 0

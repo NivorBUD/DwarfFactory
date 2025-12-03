@@ -7,6 +7,6 @@ public class DefaultItem : ItemScriptableObject
 {
     private void Awake()
     {
-        itemType = ItemType.Default;
+        
     }
 }
