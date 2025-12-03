@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 3735157409635673517}
   - component: {fileID: 4800728050965631671}
   - component: {fileID: -7647250544015431629}
+  - component: {fileID: -1584890484948596968}
   m_Layer: 0
   m_Name: Smeltery
   m_TagString: Untagged
@@ -138,19 +139,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: {x: 3, y: 3}
   buildingType: 1
-  mainUI: {fileID: 0}
-  selectionUI: {fileID: 0}
-  craftingUI: {fileID: 0}
-  inputSlotsContainer: {fileID: 0}
   outputSlot: {fileID: 0}
   recipeItemSlotPrefab: {fileID: 0}
   specificItemSlotPrefab: {fileID: 0}
-  backToSelectionButton: {fileID: 0}
-  closeUIButton: {fileID: 0}
-  craftingProgress: {fileID: 0}
   InventorySlots: {fileID: 0}
-  availableRecipes: []
-  recipesContainer: {fileID: 0}
+  craftingProgress: {fileID: 0}
+  AvailableRecipes: []
 --- !u!61 &-7647250544015431629
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -197,3 +191,15 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3, y: 3}
   m_EdgeRadius: 0
+--- !u!114 &-1584890484948596968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3842779450248896967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79e8d7499f73441ae98afe408cd0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingCraftingSystem

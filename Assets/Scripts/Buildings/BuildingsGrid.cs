@@ -10,8 +10,7 @@ public class BuildingsGrid : MonoBehaviour
     public static BuildingsGrid Instance;
     public bool IsPlacingBuilding { get; private set; }
 
-    [SerializeField]
-    private Tilemap buildingsTilemap;
+    [SerializeField] private Tilemap buildingsTilemap;
 
     private Camera cam;
     private Grid grid;

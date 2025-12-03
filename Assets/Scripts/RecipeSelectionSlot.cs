@@ -7,6 +7,7 @@ public class RecipeSelectionSlot : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private CraftingRecipe recipe;
     [SerializeField] private Image itemImage;
+    [SerializeField] private Image recipeIcon;
 
     public System.Action<CraftingRecipe> OnClick;
 
@@ -20,8 +21,8 @@ public class RecipeSelectionSlot : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        GetComponent<Image>().sprite = recipe.resultItem.icon;
-        GetComponent<Image>().color = Color.white;
+        recipeIcon.sprite = recipe.resultItem.icon;
+        recipeIcon.color = Color.white;
     }
 
 

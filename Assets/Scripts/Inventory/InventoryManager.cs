@@ -11,6 +11,7 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance { get; private set; }
     public InventoryUI ui;
     [SerializeField] private GameObject inventory, quickSlots, chestInventory;
+    private List<InventorySlot> chestSlots;
 
     private InventoryContainer playerContainer;
     private QuickSlotsInventoryContainer playerQuickContainer;
@@ -37,6 +38,15 @@ public class InventoryManager : MonoBehaviour
         playerContainer = new InventoryContainer(inventory);
         playerQuickContainer = new QuickSlotsInventoryContainer(quickSlots);
 
+        chestSlots = new();
+        for (int i = 0; i < chestInventory.transform.childCount; i++)
+        {
+            if (chestInventory.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
+            {
+                chestSlots.Add(slot);
+            }
+        }
+
         //FillSlotList(chestInventory, chestInventorySlots);
     }
 
@@ -48,10 +58,10 @@ public class InventoryManager : MonoBehaviour
         }
 
 
-        //if (chestInventoryUI != null)
-        //{
-        //    chestInventoryUI.Hide();
-        //}
+        if (chestInventory != null)
+        {
+            chestInventory.SetActive(false);
+        }
     }
 
     private void Update()
@@ -169,8 +179,16 @@ public class InventoryManager : MonoBehaviour
     public void OpenChest(Chest chest)
     {
         OpenedChest = chest;
-        OpenedChest.InizializeUISlotsFromParentObj(chestInventory);
+        OpenedChest.InizializeUISlotsFromSlotsList(chestSlots);
         ui.OpenChest();
+    }
+
+    public void SaveChestInventory()
+    {
+        if (OpenedChest != null)
+        {
+            OpenedChest.SaveData(chestSlots);
+        }
     }
 
     public List<InventorySlot> GetChestInventorySlots()
@@ -182,11 +200,25 @@ public class InventoryManager : MonoBehaviour
     public void OpenCraftingBuilding(CraftingBuilding building)
     {
         OpenedCraftingBuilding = building;
+        ui.OpenCraftingBuilding();
     }
 
     public void CloseInventoryFromButton()
     {
         ui.ToggleInventory();
+    }
+
+    public int CalculateMaxCrafts(CraftingRecipe recipe)
+    {
+        int maxCrafts = -1;
+        foreach (var ingredient in recipe.ingredients)
+        {
+            int playerAmount = InventoryManager.Instance.CountItem(ingredient.item);
+            int craftsForThisItem = playerAmount / ingredient.amount;
+            if (craftsForThisItem < maxCrafts || maxCrafts == -1)
+                maxCrafts = craftsForThisItem;
+        }
+        return maxCrafts;
     }
 }
 
