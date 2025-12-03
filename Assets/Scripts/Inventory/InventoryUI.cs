@@ -15,6 +15,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private SpecificItemSlot outputSlot;
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
+    [SerializeField] public Slider craftingProgress;
 
 
     [SerializeField] private Button backToSelectionButton;

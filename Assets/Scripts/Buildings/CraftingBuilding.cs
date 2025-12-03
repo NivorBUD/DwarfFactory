@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 public enum CraftingBuildingType
 {
@@ -22,8 +23,6 @@ public class CraftingBuilding : Building
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
     [SerializeField] private GameObject InventorySlots;
-
-    public Slider craftingProgress;
 
     [Header("Recipe Selection")]
     [SerializeField] private List<CraftingRecipe> AvailableRecipes;
@@ -87,6 +86,20 @@ public class CraftingBuilding : Building
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (InventoryManager.Instance.OpenedCraftingBuilding == this && InventoryManager.Instance.ui.IsCraftingBuildingOpened)
+        {
+            SaveData();
+        }
+        
+
+        if (IsCrafting)
+        {
+            craftingSystem.TryStartCrafting(currentRecipe);
+        }
+    }
+
     public void SetupRecipesSlots(GameObject recipesContainer)
     {
         IsCrafting = false;
@@ -140,17 +153,35 @@ public class CraftingBuilding : Building
         }
     }
 
-    private void Update()
-    {
-        var a = 1;
-    }
-
     public void SaveData()
     {
         List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.InputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
         for (int i = 0; i < inputSlots.Count; i++)
         {
             inputSlots[i].Set(newSlots[i].Item, newSlots[i].Amount);
+        }
+
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlot;
+        for (int i = 0; i < inputSlots.Count; i++)
+        {
+            outputSlot.Set(outUiSlot.Item, outUiSlot.Amount);
+        }
+    }
+
+    public void DownloadDataInUi()
+    {
+        List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.InputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
+        for (int i = 0; i < inputSlots.Count; i++)
+        {
+            newSlots[i].Set(inputSlots[i].Item, inputSlots[i].Amount);
+        }
+
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlot;
+        for (int i = 0; i < inputSlots.Count; i++)
+        {
+            outUiSlot.Clear();
+            outUiSlot.SetAllowedItem(outputSlot.Item);
+            outUiSlot.Set(outputSlot.Item, outputSlot.Amount);
         }
     }
 
@@ -178,6 +209,7 @@ public class CraftingBuilding : Building
                     int taken = Mathf.Min(slot.Amount, remain);
                     slot.RemoveAmount(taken);
                     remain -= taken;
+                    DownloadDataInUi();
                 }
             }
         }
@@ -200,10 +232,13 @@ public class CraftingBuilding : Building
             outputSlot.Set(recipe.resultItem, recipe.resultAmount);
         else
             outputSlot.AddAmount(recipe.resultAmount);
+
+        DownloadDataInUi();
     }
 
     public void ReturnItemsToInventory()
     {
+        craftingSystem.ClearQueue();
         currentRecipe = null;
 
         //if (!outputSlot)

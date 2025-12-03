@@ -84,7 +84,11 @@ public class InventorySlot : MonoBehaviour
             return;
         }
         Amount = newAmount;
-        textAmount.text = newAmount > 1 ? newAmount.ToString() : "";
+        if (textAmount != null)
+        {
+            textAmount.text = newAmount > 1 ? newAmount.ToString() : "";
+        }
+        
     }
 
     public virtual int AddAmount(int addedAmount)
