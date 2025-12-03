@@ -37,10 +37,22 @@ public class BotFollower : MonoBehaviour
         randomOffset = Random.insideUnitCircle * 0.5f;
     }
 
+    // --- Новый метод для обработки ввода ---
+    private void Update()
+    {
+        // Проверяем, нажата ли клавиша "K"
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Die();
+        }
+    }
+    // ---------------------------------------
+
     private void FixedUpdate()
     {
         if (player == null) return;
-
+        // ... (остальной код FixedUpdate без изменений)
+        
         float distance = Vector2.Distance(transform.position, player.position);
         Vector2 velocity = Vector2.zero;
         bool isMoving = false;
@@ -78,6 +90,29 @@ public class BotFollower : MonoBehaviour
             animator.SetBool("IsWalking", isMoving);
         }
     }
+
+    // --- Метод смерти, который будет использоваться в игре ---
+    public void Die()
+    {
+        // 1. Останавливаем движение бота
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
+        // Отключаем этот компонент, чтобы остановить логику движения и вызов Die
+        enabled = false; 
+
+        // 2. Запускаем анимацию смерти
+        if (animator != null)
+        {
+            // Убедитесь, что триггер "Die" настроен в Animator Controller!
+            animator.SetTrigger("DeathTrigger"); 
+        }
+
+        // 3. Удаляем объект через время проигрывания анимации
+        Destroy(gameObject, 3f); 
+    }
+    // --------------------------------------------------------
 
     private void OnDrawGizmosSelected()
     {

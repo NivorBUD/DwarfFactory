@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 275156916246756435}
   - component: {fileID: 5097256124458083618}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: rightleg_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9057132306166413828}
   - component: {fileID: 1233421427678358195}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Head_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8426173039959323040}
   - component: {fileID: 5408066408086355373}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftHandUp_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -280,7 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1089027391774235711}
   - component: {fileID: 4761231737563182622}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Legs_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,7 +370,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8340730548630451482}
   - component: {fileID: 592023705822967797}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Body_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1295558306203640642}
   - component: {fileID: 2253372749650238877}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: leftleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,9 +552,9 @@ GameObject:
   - component: {fileID: 6922150747443999799}
   - component: {fileID: 8335606005862609293}
   - component: {fileID: 2592458670081987148}
-  - component: {fileID: 644676678025003832}
   - component: {fileID: 6628665808324707110}
-  m_Layer: 0
+  - component: {fileID: 8178905836914990783}
+  m_Layer: 7
   m_Name: Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,7 +614,7 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7725445141621750125}
   m_BodyType: 0
-  m_Simulated: 0
+  m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -729,28 +729,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!195 &644676678025003832
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7725445141621750125}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!114 &6628665808324707110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -766,12 +744,54 @@ MonoBehaviour:
   player: {fileID: 0}
   followDistance: 2
   moveSpeed: 2
-  stopDistance: 2
-  avoidanceRadius: 0.5
-  botLayer:
+  stopDistance: 1
+  animator: {fileID: 6922150747443999799}
+--- !u!61 &8178905836914990783
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7725445141621750125}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  animator: {fileID: 6922150747443999799}
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.020530224, y: -0.7762572}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.4516621, y: 1.9521629}
+  m_EdgeRadius: 0
 --- !u!1 &7907142002983835694
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,7 +802,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6701154703946162485}
   - component: {fileID: 4814388804487604224}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightHand_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
