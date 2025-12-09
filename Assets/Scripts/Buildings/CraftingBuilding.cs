@@ -73,12 +73,10 @@ public class CraftingBuilding : Building
     public void SelectRecipe(CraftingRecipe recipe)
     {
         currentRecipe = recipe;
+        outputSlot.SetAllowedItem(recipe.resultItem);
         InventoryManager.Instance.ui.ChangeCraftAndSelectionCraftingBuilding();
 
         IsCrafting = true;
-        
-
-        outputSlot.SetAllowedItem(recipe.resultItem);
 
         if (CanCraft())
         {

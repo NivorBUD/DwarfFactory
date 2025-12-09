@@ -33,8 +33,8 @@ public class InventorySlot : MonoBehaviour
     private void Awake()
     {
         if (!BGImage) BGImage = GetComponent<Image>();
-        if (!iconImage) iconImage = transform.GetChild(0).GetChild(0).GetComponent<Image>();
-        if (!textAmount) textAmount = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        if (!iconImage) iconImage = transform.GetChild(transform.childCount - 1).GetChild(0).GetComponent<Image>();
+        if (!textAmount) textAmount = transform.GetChild(transform.childCount - 1).GetChild(1).GetComponent<TextMeshProUGUI>();
         Clear();
     }
 

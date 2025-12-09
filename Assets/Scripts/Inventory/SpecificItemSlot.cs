@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SpecificItemSlot : InventorySlot
 {
     [SerializeField] private ItemScriptableObject allowedItem;
+    [SerializeField] private Image hintIcon;
 
     public ItemScriptableObject AllowedItem => allowedItem;
 
@@ -28,6 +30,11 @@ public class SpecificItemSlot : InventorySlot
     public void SetAllowedItem(ItemScriptableObject item)
     {
         allowedItem = item;
+        if (allowedItem && hintIcon)
+        {
+            hintIcon.sprite = allowedItem.icon;
+            hintIcon.color = new Color(1, 1, 1, 0.5f); // полупрозрачная подсказка
+        }
     }
 
     public override InventorySlot Copy()
