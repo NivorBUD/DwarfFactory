@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7996074669399311856}
   - component: {fileID: 8574938869103347242}
   - component: {fileID: 8687493809749129323}
+  - component: {fileID: 4731647581438224439}
   m_Layer: 0
   m_Name: Workshop
   m_TagString: Untagged
@@ -48,19 +49,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Size: {x: 4, y: 4}
   buildingType: 3
-  mainUI: {fileID: 0}
-  selectionUI: {fileID: 0}
-  craftingUI: {fileID: 0}
-  inputSlotsContainer: {fileID: 0}
   outputSlot: {fileID: 0}
   recipeItemSlotPrefab: {fileID: 0}
   specificItemSlotPrefab: {fileID: 0}
-  backToSelectionButton: {fileID: 0}
-  closeUIButton: {fileID: 0}
-  craftingProgress: {fileID: 0}
   InventorySlots: {fileID: 0}
-  availableRecipes: []
-  recipesContainer: {fileID: 0}
+  craftingProgress: {fileID: 0}
+  AvailableRecipes: []
 --- !u!61 &8687493809749129323
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -107,6 +101,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &4731647581438224439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4379214323494383079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca79e8d7499f73441ae98afe408cd0f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingCraftingSystem
 --- !u!1 &9161223009017535960
 GameObject:
   m_ObjectHideFlags: 0

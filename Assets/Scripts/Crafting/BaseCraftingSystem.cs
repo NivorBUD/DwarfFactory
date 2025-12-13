@@ -89,8 +89,16 @@ public abstract class BaseCraftingSystem : MonoBehaviour
         isCrafting = false;
     }
 
-    protected void ClearQueue()
-    {
 
+    /// <summary>
+    /// Очистить очередь и остановить обработку.
+    /// </summary>
+    public void ClearQueue()
+    {
+        craftingQueue.Clear();
+        if (isCrafting)
+        {
+            StopCoroutine(ProcessQueue());
+        }
     }
 }

@@ -20,17 +20,17 @@ public class BuildingCraftingSystem : BaseCraftingSystem
 
     private void UpdateProgress(CraftingTask task)
     {
-        if (building.craftingProgress != null)
+        if (InventoryManager.Instance.ui.craftingProgress != null && InventoryManager.Instance.OpenedCraftingBuilding == building)
         {
-            building.craftingProgress.value = task.Progress;
+            InventoryManager.Instance.ui.craftingProgress.value = task.Progress;
         }
     }
 
     private void HandleComplete(CraftingTask task)
     {
         // Скрыть прогресс при завершении
-        if (building.craftingProgress != null)
-            building.craftingProgress.value = 0f;
+        if (InventoryManager.Instance.OpenedCraftingBuilding == building && InventoryManager.Instance.ui.craftingProgress != null)
+            InventoryManager.Instance.ui.craftingProgress.value = 0f;
 
         // Проверяем ресурсы — повторяем крафт если возможно
         if (HasRequiredItems(task.Recipe))
@@ -64,19 +64,15 @@ public class BuildingCraftingSystem : BaseCraftingSystem
         building.AddOutputItem(recipe);
     }
 
+    public void TryStartCrafting(CraftingRecipe recipe)
+    {
+        if (recipe == null) return;
 
+        if (craftingQueue.Count != 0) return;
 
-    /// <summary>
-    /// Очистить очередь и остановить обработку.
-    /// </summary>
-    //public void ClearQueue()
-    //{
-    //    craftingQueue.Clear();
-    //    OnQueueCountChanged(0);
-    //    if (isCrafting)
-    //    {
-    //        StopCoroutine(processCoroutine);
-    //        processCoroutine = null;
-    //    }
-    //}
+        if (HasRequiredItems(recipe))
+        {
+            QueueCraft(recipe);
+        }
+    }
 }
