@@ -29,7 +29,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject closeButton;
     [SerializeField] private GameObject craftingPanel;
 
-    public bool IsInventoryOpened => inventory.activeSelf;
+    public bool IsInventoryOpened => InventoryPanel != null && InventoryPanel.activeSelf;
     public bool IsChestOpened { get; private set; }
     public bool IsCraftingBuildingOpened { get; private set; }
     public bool IsDwarfOpened { get; private set; }
@@ -55,6 +55,17 @@ public class InventoryUI : MonoBehaviour
 
     public void ToggleInventory()
     {
+        if (IsInventoryOpened)
+        {
+            Close();
+            return;
+        }
+
+        Open();
+    }
+
+    public void Open()
+    {
         if (IsCraftingBuildingOpened)
         {
             OpenCraftingBuildingUI();
@@ -73,58 +84,101 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void Close()
+    {
+        // Persist state when closing contextual UIs
+        if (chestInventory != null && chestInventory.activeSelf)
+        {
+            InventoryManager.Instance?.SaveChestInventory();
+        }
+
+        if (buildingsUI != null && buildingsUI.activeSelf)
+        {
+            var mgr = InventoryManager.Instance;
+            if (mgr != null && mgr.OpenedCraftingBuilding != null)
+            {
+                mgr.OpenedCraftingBuilding.SaveData();
+            }
+        }
+
+        IsChestOpened = false;
+        IsCraftingBuildingOpened = false;
+
+        if (selectionUI != null) selectionUI.SetActive(false);
+        if (craftingUI != null) craftingUI.SetActive(false);
+        if (buildingsUI != null) buildingsUI.SetActive(false);
+        if (chestInventory != null) chestInventory.SetActive(false);
+
+        if (inventory != null) inventory.SetActive(false);
+        if (craftingPanel != null) craftingPanel.SetActive(false);
+        if (closeButton != null) closeButton.SetActive(false);
+        if (InventoryPanel != null) InventoryPanel.SetActive(false);
+    }
+
     private void OpenPlayerInventoryUI()
     {
-        buildingsUI.SetActive(false);
-        closeButton.SetActive(!IsInventoryOpened);
-        craftingPanel.SetActive(!chestInventory.activeSelf);
-        InventoryPanel.SetActive(!IsInventoryOpened);
+        // Player inventory (no contextual building/chest UI)
+        if (buildingsUI != null) buildingsUI.SetActive(false);
+        if (chestInventory != null) chestInventory.SetActive(false);
+        if (selectionUI != null) selectionUI.SetActive(false);
+        if (craftingUI != null) craftingUI.SetActive(false);
 
-        // последним, потому что на него ориентируется IsInventoryOpened
-        inventory.SetActive(!IsInventoryOpened);
+        if (InventoryPanel != null) InventoryPanel.SetActive(true);
+        if (inventory != null) inventory.SetActive(true);
+
+        if (closeButton != null) closeButton.SetActive(true);
+        if (craftingPanel != null) craftingPanel.SetActive(true);
     }
 
     private void OpenChestUI()
     {
-        inventory.SetActive(!IsInventoryOpened);
-        craftingUI.SetActive(false);
-        selectionUI.SetActive(false);
+        // Chest UI implies the main inventory UI is open
+        if (InventoryPanel != null) InventoryPanel.SetActive(true);
 
-        if (chestInventory.activeSelf)
-        {
-            InventoryManager.Instance.SaveChestInventory();
-            IsChestOpened = false;
-        }
+        if (inventory != null) inventory.SetActive(true);
+        if (closeButton != null) closeButton.SetActive(true);
 
-        buildingsUI.SetActive(IsChestOpened);
-        chestInventory.SetActive(IsChestOpened);
+        if (craftingPanel != null) craftingPanel.SetActive(false);
+        if (craftingUI != null) craftingUI.SetActive(false);
+        if (selectionUI != null) selectionUI.SetActive(false);
+
+        if (buildingsUI != null) buildingsUI.SetActive(true);
+        if (chestInventory != null) chestInventory.SetActive(true);
     }
 
     private void OpenCraftingBuildingUI()
     {
-        inventory.SetActive(!IsInventoryOpened);
+        // Crafting building UI implies the main inventory UI is open
+        if (InventoryPanel != null) InventoryPanel.SetActive(true);
 
-        if (buildingsUI.activeSelf)
+        if (inventory != null) inventory.SetActive(true);
+        if (closeButton != null) closeButton.SetActive(true);
+        if (craftingPanel != null) craftingPanel.SetActive(false);
+
+        if (buildingsUI != null) buildingsUI.SetActive(true);
+
+        var mgr = InventoryManager.Instance;
+        var building = mgr != null ? mgr.OpenedCraftingBuilding : null;
+        if (building == null)
         {
-            IsCraftingBuildingOpened = false;
-            InventoryManager.Instance.OpenedCraftingBuilding.SaveData();
+            if (craftingUI != null) craftingUI.SetActive(false);
+            if (selectionUI != null) selectionUI.SetActive(false);
+            return;
         }
 
-        buildingsUI.SetActive(IsCraftingBuildingOpened);
-        if (!InventoryManager.Instance.OpenedCraftingBuilding.IsCrafting)
+        if (!building.IsCrafting)
         {
-            // суйчас выбор крафта
-            craftingUI.SetActive(!IsCraftingBuildingOpened && buildingsUI.activeSelf);
-            selectionUI.SetActive(IsCraftingBuildingOpened && buildingsUI.activeSelf);
-            InventoryManager.Instance.OpenedCraftingBuilding.SetupRecipesSlots(recipeContainer);
+            // Only recipes list
+            if (craftingUI != null) craftingUI.SetActive(false);
+            if (selectionUI != null) selectionUI.SetActive(true);
+            building.SetupRecipesSlots(recipeContainer);
         }
         else
         {
-            // сейчас что-то крафтиться
-            craftingUI.SetActive(IsCraftingBuildingOpened && buildingsUI.activeSelf);
-            selectionUI.SetActive(!IsCraftingBuildingOpened && buildingsUI.activeSelf);
-            if (IsCraftingBuildingOpened) 
-                InventoryManager.Instance.OpenedCraftingBuilding.InizializeUICraftingSlots();
+            // Crafting in progress / crafting view
+            if (craftingUI != null) craftingUI.SetActive(true);
+            if (selectionUI != null) selectionUI.SetActive(false);
+            building.InizializeUICraftingSlots();
         }
     }
 
@@ -133,25 +187,27 @@ public class InventoryUI : MonoBehaviour
     public void OpenChest()
     {
         IsChestOpened = true;
-        ToggleInventory();
+        IsCraftingBuildingOpened = false;
+        Open();
     }
 
     public void OpenCraftingBuilding()
     {
         IsCraftingBuildingOpened = true;
-        ToggleInventory();
+        IsChestOpened = false;
+        Open();
     }
 
     public void ChangeCraftAndSelectionCraftingBuilding()
     {
         if (!InventoryManager.Instance.OpenedCraftingBuilding.IsCrafting)
         {
-            // стало крафтиться 
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
             InventoryManager.Instance.OpenedCraftingBuilding.InizializeUICraftingSlots();
         }
         else
         {
-            // стал выбор
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             InventoryManager.Instance.OpenedCraftingBuilding.SaveData();
             InventoryManager.Instance.OpenedCraftingBuilding.ReturnItemsToInventory();
             InventoryManager.Instance.OpenedCraftingBuilding.SetupRecipesSlots(recipeContainer);
@@ -174,7 +230,7 @@ public class InventoryUI : MonoBehaviour
 
     //public void Refresh()
     //{
-    //    // очищаем старые
+    //    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     //    foreach (Transform child in slotsParent)
     //        Destroy(child.gameObject);
 

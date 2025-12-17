@@ -30,8 +30,8 @@ public class InventoryManager : MonoBehaviour
         InitializeContainers();
         InitializeUI();
 
-        // ui изначально включен для инициализации, выключаем его
-        ui.ToggleInventory(); 
+        // ui пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+        ui.Close();
     }
 
     private void InitializeContainers()
@@ -73,7 +73,7 @@ public class InventoryManager : MonoBehaviour
         }
 
 
-        // для смены активного слота для быстрых слотов
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (ui.IsInventoryOpened) return;
 
         float mouseWheel = Input.GetAxis("Mouse ScrollWheel");
@@ -120,7 +120,7 @@ public class InventoryManager : MonoBehaviour
         amount = playerQuickContainer.AddItems(item, amount);
         amount = playerContainer.AddItems(item, amount);
 
-        return amount; // остаток, если не хватило места
+        return amount; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     }
 
     public int AddToOpenedChest(ItemScriptableObject item, int amount)
@@ -212,7 +212,16 @@ public class InventoryManager : MonoBehaviour
 
     public void CloseInventoryFromButton()
     {
-        ui.ToggleInventory();
+        ui.Close();
+    }
+
+    /// <summary>
+    /// Generic close handler for UI buttons. Assign this to any CloseButton (OnClick) and pass the menu root GameObject.
+    /// </summary>
+    public void ClosePanel(GameObject panelRoot)
+    {
+        if (panelRoot == null) return;
+        panelRoot.SetActive(false);
     }
 
     public int CalculateMaxCrafts(CraftingRecipe recipe)
@@ -228,4 +237,3 @@ public class InventoryManager : MonoBehaviour
         return maxCrafts;
     }
 }
-
