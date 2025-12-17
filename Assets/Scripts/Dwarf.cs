@@ -63,4 +63,9 @@ public class Dwarf : MonoBehaviour
 
     public bool RemoveFromInventory(ItemScriptableObject item, int amount)
         => inventoryContainer.TryRemoveItem(item, amount);
+
+    public void Interaction()
+    {
+        InventoryManager.Instance.OpenDwarf(this);
+    }
 }

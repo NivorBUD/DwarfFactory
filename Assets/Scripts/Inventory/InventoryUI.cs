@@ -32,6 +32,7 @@ public class InventoryUI : MonoBehaviour
     public bool IsInventoryOpened => inventory.activeSelf;
     public bool IsChestOpened { get; private set; }
     public bool IsCraftingBuildingOpened { get; private set; }
+    public bool IsDwarfOpened { get; private set; }
 
     public Transform InputSlotsContainer => inputSlotsContainer;
     public Transform OutputSlotObject => outputSlotObject;
@@ -61,6 +62,10 @@ public class InventoryUI : MonoBehaviour
         else if (IsChestOpened)
         {
             OpenChestUI();
+        }
+        else if (IsDwarfOpened)
+        {
+            OpenDwarfUI();
         }
         else
         {
@@ -154,6 +159,17 @@ public class InventoryUI : MonoBehaviour
 
         selectionUI.SetActive(!selectionUI.activeSelf);
         craftingUI.SetActive(!craftingUI.activeSelf);
+    }
+
+    public void OpenDwarf()
+    {
+        IsDwarfOpened = true;
+        ToggleInventory();
+    }
+
+    public void OpenDwarfUI()
+    {
+
     }
 
     //public void Refresh()

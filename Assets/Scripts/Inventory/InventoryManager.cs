@@ -21,6 +21,7 @@ public class InventoryManager : MonoBehaviour
     public Chest OpenedChest { get; private set; }
 
     public CraftingBuilding OpenedCraftingBuilding { get; private set; }
+    public Dwarf OpenedDwarf { get; private set; }
 
     private void Awake()
     {
@@ -201,6 +202,12 @@ public class InventoryManager : MonoBehaviour
     {
         OpenedCraftingBuilding = building;
         ui.OpenCraftingBuilding();
+    }
+
+    public void OpenDwarf(Dwarf dwarf)
+    {
+        OpenedDwarf = dwarf;
+        ui.OpenDwarf();
     }
 
     public void CloseInventoryFromButton()
