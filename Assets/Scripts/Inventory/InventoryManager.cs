@@ -10,8 +10,9 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
     public InventoryUI ui;
-    [SerializeField] private GameObject inventory, quickSlots, chestInventory;
+    [SerializeField] private GameObject inventory, quickSlots, chestInventory, dwarfInventory;
     private List<InventorySlot> chestSlots;
+    private List<InventorySlot> dwarfSlots;
 
     private InventoryContainer playerContainer;
     private QuickSlotsInventoryContainer playerQuickContainer;
@@ -45,6 +46,15 @@ public class InventoryManager : MonoBehaviour
             if (chestInventory.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
             {
                 chestSlots.Add(slot);
+            }
+        }
+
+        dwarfSlots = new();
+        for (int i = 0; i < dwarfInventory.transform.childCount; i++)
+        {
+            if (dwarfInventory.transform.GetChild(i).TryGetComponent(out InventorySlot slot))
+            {
+                dwarfSlots.Add(slot);
             }
         }
 

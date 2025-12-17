@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class AllowedTypeSlot : InventorySlot
 {
-    [SerializeField] private ItemType[] allowedTypes;
+    [SerializeField] private ItemType allowedType;
 
-    public override void Set(ItemScriptableObject item, int amount)
+    public override void Set(ItemScriptableObject item, int amount = 1)
     {
         if (item == null || IsAllowed(item))
         {
@@ -22,5 +22,8 @@ public class AllowedTypeSlot : InventorySlot
     }
 
     public bool IsAllowed(ItemScriptableObject item)
-        => allowedTypes != null && allowedTypes.Contains(item.itemType);
+        => allowedType == item.itemType;
+
+    public bool SetAllowedType(ItemType type)
+        => allowedType == type;
 }

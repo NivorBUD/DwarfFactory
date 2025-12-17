@@ -21,21 +21,35 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Button backToSelectionButton;
     [SerializeField] private Button closeUIButtonCB;
 
+    [Header("UI Dwarf References")]
+    [SerializeField] private GameObject DwarfUI;
+    [SerializeField] private GameObject DwarfInventory;
+    [SerializeField] private AllowedTypeSlot dwarfHelmetSlot;
+    [SerializeField] private AllowedTypeSlot dwarfChestSlot;
+    [SerializeField] private AllowedTypeSlot dwarfBootsSlot;
+    [SerializeField] private AllowedTypeSlot dwarfWeaponSlot;
+
     [Header("UI Player References")]
     [SerializeField] private GameObject InventoryPanel;
     [SerializeField] private GameObject inventory;
     [SerializeField] private GameObject chestInventory;
     [SerializeField] private GameObject quickSlots;
-    [SerializeField] private GameObject closeButton;
     [SerializeField] private GameObject craftingPanel;
 
-    public bool IsInventoryOpened => InventoryPanel != null && InventoryPanel.activeSelf;
+    private bool IsUIOpen;
+
+    public bool IsInventoryOpened => IsUIOpen;
     public bool IsChestOpened { get; private set; }
     public bool IsCraftingBuildingOpened { get; private set; }
     public bool IsDwarfOpened { get; private set; }
 
-    public Transform InputSlotsContainer => inputSlotsContainer;
-    public Transform OutputSlotObject => outputSlotObject;
+    public Transform BuildingInputSlotsContainer => inputSlotsContainer;
+    public Transform BuildingOutputSlotObject => outputSlotObject;
+    public AllowedTypeSlot DwarfHelmetSlot => dwarfHelmetSlot;
+    public AllowedTypeSlot DwarfChestSlot => dwarfChestSlot;
+    public AllowedTypeSlot DwarfBootsSlot => dwarfBootsSlot;
+    public AllowedTypeSlot DwarfWeaponSlot => dwarfWeaponSlot;
+
 
     private InventoryContainer container;
 
@@ -66,6 +80,7 @@ public class InventoryUI : MonoBehaviour
 
     public void Open()
     {
+        IsUIOpen = true;
         if (IsCraftingBuildingOpened)
         {
             OpenCraftingBuildingUI();
@@ -86,7 +101,8 @@ public class InventoryUI : MonoBehaviour
 
     public void Close()
     {
-        // Persist state when closing contextual UIs
+        IsUIOpen = false;
+
         if (chestInventory != null && chestInventory.activeSelf)
         {
             InventoryManager.Instance?.SaveChestInventory();
@@ -94,90 +110,52 @@ public class InventoryUI : MonoBehaviour
 
         if (buildingsUI != null && buildingsUI.activeSelf)
         {
-            var mgr = InventoryManager.Instance;
-            if (mgr != null && mgr.OpenedCraftingBuilding != null)
+            if (InventoryManager.Instance.OpenedCraftingBuilding != null)
             {
-                mgr.OpenedCraftingBuilding.SaveData();
+                InventoryManager.Instance.OpenedCraftingBuilding.SaveData();
             }
         }
 
         IsChestOpened = false;
         IsCraftingBuildingOpened = false;
+        IsDwarfOpened = false;
 
-        if (selectionUI != null) selectionUI.SetActive(false);
-        if (craftingUI != null) craftingUI.SetActive(false);
-        if (buildingsUI != null) buildingsUI.SetActive(false);
-        if (chestInventory != null) chestInventory.SetActive(false);
-
-        if (inventory != null) inventory.SetActive(false);
-        if (craftingPanel != null) craftingPanel.SetActive(false);
-        if (closeButton != null) closeButton.SetActive(false);
-        if (InventoryPanel != null) InventoryPanel.SetActive(false);
+        DisActiveElements(DwarfInventory, DwarfUI, selectionUI, craftingUI, buildingsUI, chestInventory, inventory, craftingPanel, InventoryPanel);
     }
 
     private void OpenPlayerInventoryUI()
     {
-        // Player inventory (no contextual building/chest UI)
-        if (buildingsUI != null) buildingsUI.SetActive(false);
-        if (chestInventory != null) chestInventory.SetActive(false);
-        if (selectionUI != null) selectionUI.SetActive(false);
-        if (craftingUI != null) craftingUI.SetActive(false);
-
-        if (InventoryPanel != null) InventoryPanel.SetActive(true);
-        if (inventory != null) inventory.SetActive(true);
-
-        if (closeButton != null) closeButton.SetActive(true);
-        if (craftingPanel != null) craftingPanel.SetActive(true);
+        ActivateElements(InventoryPanel, inventory, craftingPanel);;
     }
 
     private void OpenChestUI()
     {
-        // Chest UI implies the main inventory UI is open
-        if (InventoryPanel != null) InventoryPanel.SetActive(true);
-
-        if (inventory != null) inventory.SetActive(true);
-        if (closeButton != null) closeButton.SetActive(true);
-
-        if (craftingPanel != null) craftingPanel.SetActive(false);
-        if (craftingUI != null) craftingUI.SetActive(false);
-        if (selectionUI != null) selectionUI.SetActive(false);
-
-        if (buildingsUI != null) buildingsUI.SetActive(true);
-        if (chestInventory != null) chestInventory.SetActive(true);
+        ActivateElements(buildingsUI, inventory, chestInventory);
     }
 
     private void OpenCraftingBuildingUI()
     {
-        // Crafting building UI implies the main inventory UI is open
-        if (InventoryPanel != null) InventoryPanel.SetActive(true);
+        ActivateElements(inventory, buildingsUI);
 
-        if (inventory != null) inventory.SetActive(true);
-        if (closeButton != null) closeButton.SetActive(true);
-        if (craftingPanel != null) craftingPanel.SetActive(false);
-
-        if (buildingsUI != null) buildingsUI.SetActive(true);
-
-        var mgr = InventoryManager.Instance;
-        var building = mgr != null ? mgr.OpenedCraftingBuilding : null;
+        var building = InventoryManager.Instance.OpenedCraftingBuilding;
         if (building == null)
         {
-            if (craftingUI != null) craftingUI.SetActive(false);
-            if (selectionUI != null) selectionUI.SetActive(false);
+            Close();
             return;
         }
 
         if (!building.IsCrafting)
         {
             // Only recipes list
-            if (craftingUI != null) craftingUI.SetActive(false);
-            if (selectionUI != null) selectionUI.SetActive(true);
+            craftingUI.SetActive(false);
+            selectionUI.SetActive(true);
             building.SetupRecipesSlots(recipeContainer);
         }
         else
         {
             // Crafting in progress / crafting view
-            if (craftingUI != null) craftingUI.SetActive(true);
-            if (selectionUI != null) selectionUI.SetActive(false);
+            craftingUI.SetActive(true);
+            selectionUI.SetActive(false);
             building.InizializeUICraftingSlots();
         }
     }
@@ -187,14 +165,12 @@ public class InventoryUI : MonoBehaviour
     public void OpenChest()
     {
         IsChestOpened = true;
-        IsCraftingBuildingOpened = false;
         Open();
     }
 
     public void OpenCraftingBuilding()
     {
         IsCraftingBuildingOpened = true;
-        IsChestOpened = false;
         Open();
     }
 
@@ -209,7 +185,7 @@ public class InventoryUI : MonoBehaviour
         {
             // ���� �����
             InventoryManager.Instance.OpenedCraftingBuilding.SaveData();
-            InventoryManager.Instance.OpenedCraftingBuilding.ReturnItemsToInventory();
+            InventoryManager.Instance.OpenedCraftingBuilding.ReturnItemsToPlayerInventory();
             InventoryManager.Instance.OpenedCraftingBuilding.SetupRecipesSlots(recipeContainer);
         }
 
@@ -225,7 +201,26 @@ public class InventoryUI : MonoBehaviour
 
     public void OpenDwarfUI()
     {
+        ActivateElements(inventory, DwarfUI, DwarfInventory, buildingsUI );
+    }
 
+    private void ActivateElements(params GameObject[] gameObjects)
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject != null)
+            {
+                gameObject.SetActive(true);
+            } 
+        }
+    }
+
+    private void DisActiveElements(params GameObject[] gameObjects)
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            if (gameObject != null) gameObject.SetActive(false);
+        }
     }
 
     //public void Refresh()

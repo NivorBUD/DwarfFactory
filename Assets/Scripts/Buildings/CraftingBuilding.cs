@@ -22,7 +22,6 @@ public class CraftingBuilding : Building
     [SerializeField] private SpecificItemSlot outputSlot;
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
-    [SerializeField] private GameObject InventorySlots;
 
     [Header("Recipe Selection")]
     [SerializeField] private List<CraftingRecipe> AvailableRecipes;
@@ -117,26 +116,26 @@ public class CraftingBuilding : Building
 
     public void InizializeUICraftingSlots()
     {
-        foreach (var slot in InventoryManager.Instance.ui.InputSlotsContainer.gameObject.GetComponentsInChildren<SpecificItemSlot>())
+        foreach (var slot in InventoryManager.Instance.ui.BuildingInputSlotsContainer.gameObject.GetComponentsInChildren<SpecificItemSlot>())
         {
             Destroy(slot.gameObject);
         }
 
-        if (InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>())
+        if (InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>())
         {
-            Destroy(InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>().gameObject);
+            Destroy(InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>().gameObject);
         }
 
         List<SpecificItemSlot> slots = new();
         foreach (RecipeIngredient ingridient in currentRecipe.ingredients)  
         {
-            var slotObj = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.InputSlotsContainer);
+            var slotObj = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.BuildingInputSlotsContainer);
             var slot = slotObj.GetComponent<SpecificItemSlot>();
             slot.SetAllowedItem(ingridient.item);
             slots.Add(slot);
         }
 
-        SpecificItemSlot outSlot = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.OutputSlotObject).GetComponent<SpecificItemSlot>();
+        SpecificItemSlot outSlot = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.BuildingOutputSlotObject).GetComponent<SpecificItemSlot>();
         outSlot.SetAllowedItem(outputSlot.AllowedItem);
 
         outSlot.Set(outputSlot.Item, outputSlot.Amount);
@@ -162,13 +161,13 @@ public class CraftingBuilding : Building
 
     public void SaveData()
     {
-        List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.InputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
+        List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.BuildingInputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
         for (int i = 0; i < inputSlots.Count; i++)
         {
             inputSlots[i].Set(newSlots[i].Item, newSlots[i].Amount);
         }
 
-        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
         for (int i = 0; i < inputSlots.Count; i++)
         {
             outputSlot.Set(outUiSlot.Item, outUiSlot.Amount);
@@ -177,13 +176,13 @@ public class CraftingBuilding : Building
 
     public void DownloadDataInUi()
     {
-        List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.InputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
+        List<SpecificItemSlot> newSlots = new(InventoryManager.Instance.ui.BuildingInputSlotsContainer.GetComponentsInChildren<SpecificItemSlot>());
         for (int i = 0; i < inputSlots.Count; i++)
         {
             newSlots[i].Set(inputSlots[i].Item, inputSlots[i].Amount);
         }
 
-        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.OutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
+        SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
         for (int i = 0; i < inputSlots.Count; i++)
         {
             outUiSlot.Clear();
@@ -249,7 +248,7 @@ public class CraftingBuilding : Building
         }
     }
 
-    public void ReturnItemsToInventory()
+    public void ReturnItemsToPlayerInventory()
     {
         craftingSystem.ClearQueue();
         currentRecipe = null;
@@ -292,6 +291,6 @@ public class CraftingBuilding : Building
 
     private void OnDestroy()
     {
-        ReturnItemsToInventory();
+        ReturnItemsToPlayerInventory();
     }
 }
