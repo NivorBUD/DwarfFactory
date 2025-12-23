@@ -17,4 +17,4 @@ MonoBehaviour:
   maximumAmount: 100
   itemType: 1
   itemPrefab: {fileID: 5458660989883616782, guid: 2eea076774d27f04c9892ec8b38275ba, type: 3}
-  icon: {fileID: -4746224472117266517, guid: bf9bf1e0cb2dac24091016267841e372, type: 3}
+  icon: {fileID: -5281422124547630143, guid: 43dd8d831fd719b4a857cee46cf5cc9a, type: 3}

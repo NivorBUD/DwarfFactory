@@ -7,7 +7,9 @@ public enum ItemType
     Default,
     Building,
     Weapon,
-    Armor
+    Helmet,
+    Chestplate,
+    Boots
 }
 
 public class ItemScriptableObject : ScriptableObject

@@ -50,11 +50,24 @@ MonoBehaviour:
   Size: {x: 4, y: 4}
   buildingType: 3
   outputSlot: {fileID: 0}
-  recipeItemSlotPrefab: {fileID: 0}
-  specificItemSlotPrefab: {fileID: 0}
-  InventorySlots: {fileID: 0}
-  craftingProgress: {fileID: 0}
-  AvailableRecipes: []
+  recipeItemSlotPrefab: {fileID: 5121522981275796360, guid: 083bf89a4aed0754486eefbc39e88a4e, type: 3}
+  specificItemSlotPrefab: {fileID: 5121522981275796360, guid: 3a2ddc12f9fd21143932d10e2b5b17e8, type: 3}
+  AvailableRecipes:
+  - {fileID: 11400000, guid: 1ab16015bf5fc88428e6e5ace36333ea, type: 2}
+  - {fileID: 11400000, guid: d60aa8b01db7c5b4098626234eebee7f, type: 2}
+  - {fileID: 11400000, guid: c1fe8ef5a9981454d85c9b8bda98f4a0, type: 2}
+  - {fileID: 11400000, guid: 591c8a51fc216284d8729ba310eab656, type: 2}
+  - {fileID: 11400000, guid: fe2c466cdeff5a048bb8036aa475a7ff, type: 2}
+  - {fileID: 11400000, guid: 7b8b3b6499e610e4c93b7d1ffdc67e14, type: 2}
+  - {fileID: 11400000, guid: ac8ac96b121bcf44a99092b3f31a6a9c, type: 2}
+  - {fileID: 11400000, guid: dbb688d24989a284e87b0a63cfc61400, type: 2}
+  - {fileID: 11400000, guid: 7d3d22110f6a38c4b9dbc400969b13c5, type: 2}
+  - {fileID: 11400000, guid: b6e2da86f14433e4ebfa60f45250331d, type: 2}
+  - {fileID: 11400000, guid: 6446162d12b898a40b52387009dc7348, type: 2}
+  - {fileID: 11400000, guid: 7ec334e1c98b7344883e5cd31b8f067e, type: 2}
+  - {fileID: 11400000, guid: 9f0e17343204fe84981f387be39065df, type: 2}
+  - {fileID: 11400000, guid: a39362c979b08624a8a863f8790d3218, type: 2}
+  - {fileID: 11400000, guid: de76c0fc0e3440648b54cc2521739591, type: 2}
 --- !u!61 &8687493809749129323
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -192,12 +205,12 @@ SpriteRenderer:
   m_SortingLayerID: -867622563
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2785683880998760008, guid: bbf7b2180f7f083469bf56403eda02d8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bbf7b2180f7f083469bf56403eda02d8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.62, y: 3.01}
+  m_Size: {x: 3.84, y: 3.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

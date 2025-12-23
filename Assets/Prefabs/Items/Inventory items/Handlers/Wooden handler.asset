@@ -17,4 +17,4 @@ MonoBehaviour:
   maximumAmount: 100
   itemType: 0
   itemPrefab: {fileID: 0}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e242482202a75da4db5921bbfa634c87, type: 3}

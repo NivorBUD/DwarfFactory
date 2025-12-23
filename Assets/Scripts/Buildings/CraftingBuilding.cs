@@ -183,12 +183,9 @@ public class CraftingBuilding : Building
         }
 
         SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
-        for (int i = 0; i < inputSlots.Count; i++)
-        {
-            outUiSlot.Clear();
-            outUiSlot.SetAllowedItem(outputSlot.Item);
-            outUiSlot.Set(outputSlot.Item, outputSlot.Amount);
-        }
+        outUiSlot.Clear();
+        outUiSlot.SetAllowedItem(outputSlot.Item);
+        outUiSlot.Set(outputSlot.Item, outputSlot.Amount);
     }
 
     public bool HasItemInInputSlots(ItemScriptableObject item, int amount)

@@ -79,12 +79,12 @@ SpriteRenderer:
   m_SortingLayerID: -867622563
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1554214871758326463, guid: 3632909458b85384aae03042ef3b3162, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3632909458b85384aae03042ef3b3162, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.7, y: 2.39}
+  m_Size: {x: 3.2, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -140,11 +140,12 @@ MonoBehaviour:
   Size: {x: 3, y: 3}
   buildingType: 1
   outputSlot: {fileID: 0}
-  recipeItemSlotPrefab: {fileID: 0}
-  specificItemSlotPrefab: {fileID: 0}
-  InventorySlots: {fileID: 0}
-  craftingProgress: {fileID: 0}
-  AvailableRecipes: []
+  recipeItemSlotPrefab: {fileID: 5121522981275796360, guid: 083bf89a4aed0754486eefbc39e88a4e, type: 3}
+  specificItemSlotPrefab: {fileID: 5121522981275796360, guid: 3a2ddc12f9fd21143932d10e2b5b17e8, type: 3}
+  AvailableRecipes:
+  - {fileID: 11400000, guid: 7cc74b091e56efb409e892137930457a, type: 2}
+  - {fileID: 11400000, guid: c8cbacfbcaf72114b8e5bcfbfe399531, type: 2}
+  - {fileID: 11400000, guid: 974e354723628e043b8247b03a214c1a, type: 2}
 --- !u!61 &-7647250544015431629
 BoxCollider2D:
   m_ObjectHideFlags: 0

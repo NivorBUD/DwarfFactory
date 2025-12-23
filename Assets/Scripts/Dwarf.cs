@@ -21,13 +21,13 @@ public class Dwarf : MonoBehaviour
         inventoryContainer = new InventoryContainer(inventorySlotsParent.gameObject);
 
         HelmetSlot = new();
-        HelmetSlot.SetAllowedType(ItemType.Armor);
+        HelmetSlot.SetAllowedType(ItemType.Helmet);
 
         ChestSlot = new();
-        ChestSlot.SetAllowedType(ItemType.Armor);
+        ChestSlot.SetAllowedType(ItemType.Chestplate);
 
         BootsSlot = new();
-        BootsSlot.SetAllowedType(ItemType.Armor);
+        BootsSlot.SetAllowedType(ItemType.Boots);
 
         WeaponSlot = new();
         WeaponSlot.SetAllowedType(ItemType.Weapon);
@@ -49,24 +49,20 @@ public class Dwarf : MonoBehaviour
             return true;
         }
 
-        if (item.itemType == ItemType.Armor)
+        if (item.itemType == ItemType.Helmet && HelmetSlot.IsEmpty)
         {
-            // здесь можно расширить подтипы
-            if (HelmetSlot.IsAllowed(item) && HelmetSlot.IsEmpty)
-            {
-                HelmetSlot.Set(item, 1);
-                return true;
-            }
-            if (ChestSlot.IsAllowed(item) && ChestSlot.IsEmpty)
-            {
-                ChestSlot.Set(item, 1);
-                return true;
-            }
-            if (BootsSlot.IsAllowed(item) && BootsSlot.IsEmpty)
-            {
-                BootsSlot.Set(item, 1);
-                return true;
-            }
+            HelmetSlot.Set(item, 1);
+            return true;
+        }
+        if (item.itemType == ItemType.Chestplate && ChestSlot.IsEmpty)
+        {
+            ChestSlot.Set(item, 1);
+            return true;
+        }
+        if (item.itemType == ItemType.Boots && BootsSlot.IsEmpty)
+        {
+            BootsSlot.Set(item, 1);
+            return true;
         }
 
         return false;

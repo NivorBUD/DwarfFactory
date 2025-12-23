@@ -15,4 +15,4 @@ MonoBehaviour:
   ingredients: []
   resultItem: {fileID: 11400000, guid: fdbd6910ff720e44ba75d12f554cfd73, type: 2}
   resultAmount: 1
-  craftingTime: 1
+  craftingTime: 3

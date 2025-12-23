@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42fd3dc11f02e924c8da9cd7cc62ef16, type: 3}
+  m_Name: Wood sword recipe
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  ingredients:
+  - item: {fileID: 11400000, guid: 014a3e4f94abbf94d882980e65e7b663, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 763c2afd92762a64ea36d60bae44a013, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 8543d6f4e4953a64f9f0acb065a36006, type: 2}
+    amount: 1
+  resultItem: {fileID: 11400000, guid: 4b8c7a5cc3504b24e9826ed21e68c2d7, type: 2}
+  resultAmount: 1
+  craftingTime: 1

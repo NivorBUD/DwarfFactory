@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42fd3dc11f02e924c8da9cd7cc62ef16, type: 3}
+  m_Name: Iron sword recipe
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  ingredients:
+  - item: {fileID: 11400000, guid: 6a6bcdcbf08195e41bd050aa85b7078e, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 8538293cef2009a41a209a40fe899fd9, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 8543d6f4e4953a64f9f0acb065a36006, type: 2}
+    amount: 1
+  resultItem: {fileID: 11400000, guid: df3362e0c6113784a9e1242c93cbe951, type: 2}
+  resultAmount: 1
+  craftingTime: 1

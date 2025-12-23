@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4a53a3d8a91fd45ba75122685df45e, type: 3}
+  m_Name: Iron chestplate
+  m_EditorClassIdentifier: Assembly-CSharp::DefaultItem
+  itemName: "\u0416\u0435\u043B\u0435\u0437\u043D\u044B\u0439 \u043D\u0430\u0433\u0440\u0443\u0434\u043D\u0438\u043A"
+  itemDescription: 
+  maximumAmount: 1
+  itemType: 4
+  itemPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: cbd08a4a81634f64e9507db40e32b4aa, type: 3}
