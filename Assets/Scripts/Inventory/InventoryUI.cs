@@ -157,6 +157,7 @@ public class InventoryUI : MonoBehaviour
             craftingUI.SetActive(true);
             selectionUI.SetActive(false);
             building.InizializeUICraftingSlots();
+            craftingProgress.value = 0;
         }
     }
 
