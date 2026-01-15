@@ -125,7 +125,11 @@ public class InventoryUI : MonoBehaviour
 
     private void OpenPlayerInventoryUI()
     {
-        ActivateElements(InventoryPanel, inventory, craftingPanel);;
+        ActivateElements(InventoryPanel, inventory, craftingPanel);
+        foreach (var slot in craftingPanel.GetComponentsInChildren<CraftingSlot>())
+        {
+            slot.RefreshAmountText(null);
+        }
     }
 
     private void OpenChestUI()
@@ -157,8 +161,9 @@ public class InventoryUI : MonoBehaviour
             craftingUI.SetActive(true);
             selectionUI.SetActive(false);
             building.InizializeUICraftingSlots();
-            craftingProgress.value = 0;
         }
+
+        craftingProgress.value = 0;
     }
 
     public GameObject GetCraftingPanel() => craftingPanel;

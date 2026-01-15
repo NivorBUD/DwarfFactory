@@ -75,6 +75,8 @@ public abstract class BaseCraftingSystem : MonoBehaviour
 
             while (timer < recipe.craftingTime)
             {
+                if (!isCrafting)
+                    break;
                 timer += Time.deltaTime;
                 task.Progress = Mathf.Clamp01(timer / recipe.craftingTime);
                 OnCraftProgress?.Invoke(task);
@@ -98,6 +100,8 @@ public abstract class BaseCraftingSystem : MonoBehaviour
         craftingQueue.Clear();
         if (isCrafting)
         {
+            isCrafting = false;
+            StopAllCoroutines();
             StopCoroutine(ProcessQueue());
         }
     }

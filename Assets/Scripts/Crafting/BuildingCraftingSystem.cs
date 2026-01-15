@@ -33,7 +33,7 @@ public class BuildingCraftingSystem : BaseCraftingSystem
             InventoryManager.Instance.ui.craftingProgress.value = 0f;
 
         // Проверяем ресурсы — повторяем крафт если возможно
-        if (HasRequiredItems(task.Recipe))
+        if (building.IsCrafting && building.currentRecipe == task.Recipe && HasRequiredItems(task.Recipe))
         {
             QueueCraft(task.Recipe);
         }

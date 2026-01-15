@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42fd3dc11f02e924c8da9cd7cc62ef16, type: 3}
-  m_Name: Mine recipe
-  m_EditorClassIdentifier: 
+  m_Name: Leather helmet recipe
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
   ingredients:
-  - item: {fileID: 11400000, guid: 4dead3692274a114fb383947f9d4d644, type: 2}
-    amount: 20
-  - item: {fileID: 11400000, guid: 10060f41687f3a441aa1c588146a55aa, type: 2}
-    amount: 10
-  resultItem: {fileID: 11400000, guid: 57c2cc18250679a4786933d3b8d40eb3, type: 2}
+  - item: {fileID: 11400000, guid: 96143317fe790c142ac2757139e623b3, type: 2}
+    amount: 5
+  - item: {fileID: 11400000, guid: 8543d6f4e4953a64f9f0acb065a36006, type: 2}
+    amount: 2
+  resultItem: {fileID: 11400000, guid: ea725a4775cf6aa4d97586c428910e46, type: 2}
   resultAmount: 1
-  craftingTime: 20
+  craftingTime: 10

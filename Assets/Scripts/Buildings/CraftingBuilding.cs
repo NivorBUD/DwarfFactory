@@ -26,7 +26,7 @@ public class CraftingBuilding : Building
     [Header("Recipe Selection")]
     [SerializeField] private List<CraftingRecipe> AvailableRecipes;
 
-    private CraftingRecipe currentRecipe;
+    public CraftingRecipe currentRecipe { get; private set; }
     private List<SpecificItemSlot> inputSlots = new();
     public bool IsCrafting { get; private set; }
 
@@ -71,7 +71,9 @@ public class CraftingBuilding : Building
 
     public void SelectRecipe(CraftingRecipe recipe)
     {
+        craftingSystem.ClearQueue();
         currentRecipe = recipe;
+        outputSlot.Clear();
         outputSlot.SetAllowedItem(recipe.resultItem);
         InventoryManager.Instance.ui.ChangeCraftAndSelectionCraftingBuilding();
 
@@ -183,6 +185,10 @@ public class CraftingBuilding : Building
         }
 
         SpecificItemSlot outUiSlot = InventoryManager.Instance.ui.BuildingOutputSlotObject.GetComponentInChildren<SpecificItemSlot>();
+        if (outUiSlot.AllowedItem == outputSlot.AllowedItem && Mathf.Abs(outUiSlot.Amount - outputSlot.Amount) > 5)
+        {
+            outputSlot.Set(outputSlot.Item, 1);
+        }
         outUiSlot.Clear();
         outUiSlot.SetAllowedItem(outputSlot.Item);
         outUiSlot.Set(outputSlot.Item, outputSlot.Amount);
@@ -271,6 +277,7 @@ public class CraftingBuilding : Building
                 outputSlot.Clear();
         }
         inputSlots.Clear();
+        outputSlot.Clear();
     }
 
     private bool CanCraft()

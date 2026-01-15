@@ -21,4 +21,4 @@ MonoBehaviour:
     amount: 10
   resultItem: {fileID: 11400000, guid: 136136cf7b839f7409d3e5db08b86bc3, type: 2}
   resultAmount: 1
-  craftingTime: 1
+  craftingTime: 30
