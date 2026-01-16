@@ -55,7 +55,12 @@ public class BuildingsGrid : MonoBehaviour
 
             Vector3 MousePos = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Vector3Int pos = grid.WorldToCell(MousePos);
-            flyingBuilding.transform.position = new Vector3Int(pos.x + 1, pos.y + 1, 0);
+            
+            // Привязываем здание к сетке, но центрируем его относительно клетки под курсором
+            Vector3 cellCenter = grid.CellToWorld(pos);
+            cellCenter.x += 0.5f; // Центр клетки
+            cellCenter.y += 0.5f; // Центр клетки
+            flyingBuilding.transform.position = cellCenter;
             
             // Проверяем можно ли установить здание и меняем цвет
             bool canPlace = CheckToPlaceBuilding(pos);

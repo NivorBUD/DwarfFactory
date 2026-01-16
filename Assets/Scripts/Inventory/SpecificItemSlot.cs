@@ -5,8 +5,10 @@ public class SpecificItemSlot : InventorySlot
 {
     [SerializeField] private ItemScriptableObject allowedItem;
     [SerializeField] private Image hintIcon;
+    [SerializeField] private bool isOutputSlot = false; // РњР°СЂРєРµСЂ РІС‹С…РѕРґРЅРѕРіРѕ СЃР»РѕС‚Р°
 
     public ItemScriptableObject AllowedItem => allowedItem;
+    public bool IsOutputSlot => isOutputSlot;
 
     public override void Set(ItemScriptableObject item, int amount) 
     {
@@ -33,8 +35,13 @@ public class SpecificItemSlot : InventorySlot
         if (allowedItem && hintIcon)
         {
             hintIcon.sprite = allowedItem.icon;
-            hintIcon.color = new Color(1, 1, 1, 0.5f); // полупрозрачная подсказка
+            hintIcon.color = new Color(1, 1, 1, 0.5f); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
+    }
+    
+    public void SetAsOutputSlot(bool isOutput)
+    {
+        isOutputSlot = isOutput;
     }
 
     public override InventorySlot Copy()

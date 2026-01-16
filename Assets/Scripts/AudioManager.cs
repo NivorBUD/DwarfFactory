@@ -5,6 +5,8 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
     public AudioMixer audioMixer;
+    
+    private AudioSource audioSource;
 
     private void Awake()
     {
@@ -12,6 +14,14 @@ public class AudioManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Добавляем AudioSource если его нет
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+            
             ApplySettings();
         }
         else
@@ -43,4 +53,17 @@ public class AudioManager : MonoBehaviour
 
     public float GetVolume() => PlayerPrefs.GetFloat("volume", 1f);
     public bool IsMuted() => PlayerPrefs.GetInt("muted", 0) == 1;
+    
+    public void PlaySound(string soundPath)
+    {
+        AudioClip clip = Resources.Load<AudioClip>(soundPath);
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+        else
+        {
+            Debug.LogWarning($"[AudioManager] Не удалось загрузить звук: {soundPath}");
+        }
+    }
 }

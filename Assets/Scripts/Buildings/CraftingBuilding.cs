@@ -28,6 +28,7 @@ public class CraftingBuilding : Building
 
     [Header("Audio Settings")]
     [SerializeField] private AudioClip craftingSound;
+    [SerializeField] private float baseVolume = 1f; // Базовая громкость звука
     [SerializeField] private float minPitch = 0.8f;
     [SerializeField] private float maxPitch = 1.2f;
     [SerializeField] private float soundInterval = 0.5f; // Интервал между звуками
@@ -52,12 +53,11 @@ public class CraftingBuilding : Building
             audioSource = gameObject.AddComponent<AudioSource>();
         }
         
-        // Настраиваем AudioSource
+        // Настраиваем AudioSource для 2D игры
         audioSource.playOnAwake = false;
         audioSource.loop = false;
-        audioSource.spatialBlend = 0.5f; // Полу-3D звук
-        audioSource.minDistance = 5f;
-        audioSource.maxDistance = 20f;
+        audioSource.spatialBlend = 0f; // 2D звук (не пространственный)
+        audioSource.volume = 1f;
     }
 
     private void Start()
@@ -189,6 +189,7 @@ public class CraftingBuilding : Building
 
         SpecificItemSlot outSlot = Instantiate(specificItemSlotPrefab, InventoryManager.Instance.ui.BuildingOutputSlotObject).GetComponent<SpecificItemSlot>();
         outSlot.SetAllowedItem(outputSlot.AllowedItem);
+        outSlot.SetAsOutputSlot(true); // Помечаем как выходной слот
 
         outSlot.Set(outputSlot.Item, outputSlot.Amount);
 
@@ -383,6 +384,34 @@ public class CraftingBuilding : Building
     private void PlayCraftingSound()
     {
         if (craftingSound == null || audioSource == null) return;
+
+        // Находим игрока для расчета расстояния
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            // Вычисляем расстояние в 2D (по плоскости XY)
+            float distance = Vector2.Distance(
+                new Vector2(transform.position.x, transform.position.y),
+                new Vector2(player.transform.position.x, player.transform.position.y)
+            );
+            
+            // Рассчитываем громкость в зависимости от расстояния
+            // До 2 метров - полная громкость
+            // От 2 до 10 метров - линейное затухание
+            // После 10 метров - не слышно
+            float distanceMultiplier = 1f;
+            if (distance > 10f)
+            {
+                distanceMultiplier = 0f;
+            }
+            else if (distance > 2f)
+            {
+                distanceMultiplier = 1f - ((distance - 2f) / 8f); // (10 - 2 = 8)
+            }
+            
+            // Применяем базовую громкость и множитель расстояния
+            audioSource.volume = baseVolume * distanceMultiplier;
+        }
 
         // Генерируем случайную тональность
         float randomPitch = UnityEngine.Random.Range(minPitch, maxPitch);

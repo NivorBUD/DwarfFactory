@@ -78,6 +78,14 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             return;
         }
+        
+        // Проверяем, забираем ли мы предмет из выходного слота станка
+        bool takingFromOutputSlot = false;
+        if (oldSlot is SpecificItemSlot oldSpecSlot && oldSpecSlot.IsOutputSlot && !oldSlot.IsEmpty)
+        {
+            takingFromOutputSlot = true;
+        }
+        
         bool isHalf = InputHandler.Instance != null && InputHandler.Instance.IsShiftHeld;
         bool isOne = InputHandler.Instance != null && InputHandler.Instance.IsControlHeld;
 
@@ -98,6 +106,12 @@ public class DragAndDropItem : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         else
         {
             ExchangeDifferentTypeItem(newSlot, newSlot.Item, newSlot.Amount, newSlot.IsEmpty);
+        }
+        
+        // Воспроизводим звук после успешного забирания предмета из выходного слота
+        if (takingFromOutputSlot && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound("sounds/defaultTakeLoot");
         }
 
         if (InventoryManager.Instance.IsChestOpened)
