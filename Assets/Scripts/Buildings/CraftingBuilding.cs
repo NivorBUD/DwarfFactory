@@ -126,6 +126,9 @@ public class CraftingBuilding : Building
 
         IsCrafting = true;
 
+        // Показываем правильный прогресс-бар сразу при выборе рецепта
+        craftingSystem.ShowProgressBar();
+
         if (CanCraft())
         {
             craftingSystem.QueueCraft(recipe);
@@ -205,6 +208,12 @@ public class CraftingBuilding : Building
         if (!isSlotsSet)
         {
             inputSlots = slotsToSave;
+        }
+
+        // Показываем правильный прогресс-бар при инициализации UI
+        if (craftingSystem != null)
+        {
+            craftingSystem.ShowProgressBar();
         }
     }
 

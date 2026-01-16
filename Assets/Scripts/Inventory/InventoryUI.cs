@@ -16,6 +16,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject recipeItemSlotPrefab;
     [SerializeField] private GameObject specificItemSlotPrefab;
     [SerializeField] public Slider craftingProgress;
+    [SerializeField] public Slider craftingProgressShort;
 
 
     [SerializeField] private Button backToSelectionButton;
@@ -190,6 +191,12 @@ public class InventoryUI : MonoBehaviour
         }
 
         craftingProgress.value = 0;
+        
+        // Скрываем оба прогресс-бара по умолчанию
+        if (craftingProgress != null)
+            craftingProgress.gameObject.SetActive(false);
+        if (craftingProgressShort != null)
+            craftingProgressShort.gameObject.SetActive(false);
     }
 
     public GameObject GetCraftingPanel() => craftingPanel;
