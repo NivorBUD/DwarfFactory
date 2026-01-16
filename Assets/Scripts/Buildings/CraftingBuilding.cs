@@ -26,16 +26,49 @@ public class CraftingBuilding : Building
     [Header("Recipe Selection")]
     [SerializeField] private List<CraftingRecipe> AvailableRecipes;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip craftingSound;
+    [SerializeField] private float minPitch = 0.8f;
+    [SerializeField] private float maxPitch = 1.2f;
+    [SerializeField] private float soundInterval = 0.5f; // Интервал между звуками
+
     public CraftingRecipe currentRecipe { get; private set; }
     private List<SpecificItemSlot> inputSlots = new();
     public bool IsCrafting { get; private set; }
 
     private BuildingCraftingSystem craftingSystem;
+    private AudioSource audioSource;
+    private float soundTimer;
 
     private void Awake()
     {
         craftingSystem = GetComponent<BuildingCraftingSystem>();
         outputSlot = new();
+        
+        // Создаем AudioSource если его нет
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        
+        // Настраиваем AudioSource
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.spatialBlend = 0.5f; // Полу-3D звук
+        audioSource.minDistance = 5f;
+        audioSource.maxDistance = 20f;
+    }
+
+    private void Start()
+    {
+        // Подписываемся на события крафтинга после инициализации
+        if (craftingSystem != null)
+        {
+            craftingSystem.OnCraftStarted += OnCraftingStarted;
+            craftingSystem.OnCraftProgress += OnCraftingProgress;
+            craftingSystem.OnCraftCompleted += OnCraftingCompleted;
+        }
     }
 
     protected override void OnEnable()
@@ -53,6 +86,20 @@ public class CraftingBuilding : Building
         if (InputHandler.Instance != null)
         {
             InputHandler.Instance.OnInventoryToggle -= HandleInventoryToggleInCrafting;
+        }
+        
+        // Отписываемся от событий крафтинга
+        if (craftingSystem != null)
+        {
+            craftingSystem.OnCraftStarted -= OnCraftingStarted;
+            craftingSystem.OnCraftProgress -= OnCraftingProgress;
+            craftingSystem.OnCraftCompleted -= OnCraftingCompleted;
+        }
+        
+        // Останавливаем звук
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
         }
     }
 
@@ -296,5 +343,43 @@ public class CraftingBuilding : Building
     private void OnDestroy()
     {
         ReturnItemsToPlayerInventory();
+    }
+
+    private void OnCraftingStarted(CraftingRecipe recipe)
+    {
+        soundTimer = 0f;
+        PlayCraftingSound();
+    }
+
+    private void OnCraftingProgress(CraftingTask task)
+    {
+        // Воспроизводим звук с интервалами
+        soundTimer += Time.deltaTime;
+        if (soundTimer >= soundInterval)
+        {
+            soundTimer = 0f;
+            PlayCraftingSound();
+        }
+    }
+
+    private void OnCraftingCompleted(CraftingTask task)
+    {
+        // Можно добавить финальный звук завершения
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    private void PlayCraftingSound()
+    {
+        if (craftingSound == null || audioSource == null) return;
+
+        // Генерируем случайную тональность
+        float randomPitch = UnityEngine.Random.Range(minPitch, maxPitch);
+        audioSource.pitch = randomPitch;
+        
+        // Воспроизводим звук
+        audioSource.PlayOneShot(craftingSound);
     }
 }

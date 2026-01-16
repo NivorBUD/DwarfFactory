@@ -18,7 +18,7 @@ public class CraftingTask
 
 public abstract class BaseCraftingSystem : MonoBehaviour
 {
-    // Внешние события для UI
+    // РџСѓР±Р»РёС‡РЅС‹Рµ СЃРѕР±С‹С‚РёСЏ РґР»СЏ UI Рё Р·РІСѓРєРѕРІ
     public event Action<CraftingRecipe> OnCraftStarted;
     public event Action<int> OnQueueCountChanged;
     public event Action<CraftingTask> OnCraftProgress;
@@ -29,7 +29,7 @@ public abstract class BaseCraftingSystem : MonoBehaviour
     protected bool isCrafting = false;
 
     /// <summary>
-    /// Добавить рецепт в очередь (если ресурс(ы) есть, в момент старта они будут списаны).
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ(пїЅ) пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ).
     /// </summary>
     public virtual void QueueCraft(CraftingRecipe recipe)
     {
@@ -50,7 +50,7 @@ public abstract class BaseCraftingSystem : MonoBehaviour
 
 
     /// <summary>
-    /// Основная корутина, которая последовательно выполняет задания из очереди.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     protected IEnumerator ProcessQueue()
     {
@@ -93,7 +93,7 @@ public abstract class BaseCraftingSystem : MonoBehaviour
 
 
     /// <summary>
-    /// Очистить очередь и остановить обработку.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     public void ClearQueue()
     {

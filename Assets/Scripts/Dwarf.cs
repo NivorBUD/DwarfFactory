@@ -14,6 +14,10 @@ public class Dwarf : MonoBehaviour
     private AllowedTypeSlot BootsSlot;
     private AllowedTypeSlot WeaponSlot;
 
+    [Header("Visual Equipment")]
+    [SerializeField] private GameObject swordVisual;
+    [SerializeField] private GameObject leatherBodyVisual;
+
     public InventoryContainer Inventory => inventoryContainer;
 
     private void Awake()
@@ -31,6 +35,24 @@ public class Dwarf : MonoBehaviour
 
         WeaponSlot = new();
         WeaponSlot.SetAllowedType(ItemType.Weapon);
+
+        // Автоматически находим визуальные элементы если не назначены
+        if (swordVisual == null)
+        {
+            Transform sword = transform.Find("RightHand_0/Sword");
+            if (sword != null)
+                swordVisual = sword.gameObject;
+        }
+
+        if (leatherBodyVisual == null)
+        {
+            Transform leather = transform.Find("Body_0/LeatherBody");
+            if (leather != null)
+                leatherBodyVisual = leather.gameObject;
+        }
+
+        // Обновляем визуализацию при старте
+        UpdateEquipmentVisuals();
     }
 
     private void FixedUpdate()
@@ -119,6 +141,9 @@ public class Dwarf : MonoBehaviour
         ChestSlot.Set(InventoryManager.Instance.ui.DwarfChestSlot.Item);
         BootsSlot.Set(InventoryManager.Instance.ui.DwarfBootsSlot.Item);
         WeaponSlot.Set(InventoryManager.Instance.ui.DwarfWeaponSlot.Item);
+
+        // Обновляем визуализацию после сохранения
+        UpdateEquipmentVisuals();
     }
 
     public int AddToInventory(ItemScriptableObject item, int amount)
@@ -130,5 +155,26 @@ public class Dwarf : MonoBehaviour
     public void Interaction()
     {
         InventoryManager.Instance.OpenDwarf(this);
+    }
+
+    private void UpdateEquipmentVisuals()
+    {
+        // Показываем/скрываем меч
+        if (swordVisual != null)
+        {
+            swordVisual.SetActive(!WeaponSlot.IsEmpty);
+        }
+
+        // LeatherBody показываем только когда надета броня
+        if (leatherBodyVisual != null)
+        {
+            leatherBodyVisual.SetActive(!ChestSlot.IsEmpty);
+        }
+    }
+
+    // Публичный метод для принудительного обновления визуализации
+    public void RefreshVisuals()
+    {
+        UpdateEquipmentVisuals();
     }
 }

@@ -50,7 +50,8 @@ public class BuildingsGrid : MonoBehaviour
                 bool canPlace = CheckToPlaceBuilding(pos);
                 if (canPlace)
                 {
-                    Instantiate(flyingBuilding.gameObject);
+                    GameObject placedBuilding = Instantiate(flyingBuilding.gameObject);
+                    CreateTipGForBuilding(placedBuilding);
                     //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
                     InventoryManager.Instance.RemoveUsedItemFromActiveSlot();
@@ -78,5 +79,38 @@ public class BuildingsGrid : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void CreateTipGForBuilding(GameObject building)
+    {
+        // Проверяем, нет ли уже tipG
+        Transform existingTipG = building.transform.Find("tipG");
+        if (existingTipG != null) return;
+
+        // Создаем новый GameObject для подсказки
+        GameObject tipG = new GameObject("tipG");
+        tipG.transform.SetParent(building.transform);
+        tipG.transform.localPosition = new Vector3(0, 1f, 0); // Позиция над зданием
+        tipG.transform.localScale = Vector3.one;
+
+        // Добавляем SpriteRenderer
+        SpriteRenderer spriteRenderer = tipG.AddComponent<SpriteRenderer>();
+        spriteRenderer.sortingOrder = 100; // Чтобы был поверх всего
+
+        // Загружаем спрайт из Resources (если есть)
+        Sprite tipSprite = Resources.Load<Sprite>("tipG");
+        if (tipSprite != null)
+        {
+            spriteRenderer.sprite = tipSprite;
+        }
+        else
+        {
+            // Если спрайта нет, создаем простой квадрат с текстом "G"
+            // Можно также добавить TextMeshPro компонент
+            spriteRenderer.color = new Color(1f, 1f, 1f, 0.8f);
+        }
+
+        // По умолчанию скрываем подсказку
+        tipG.SetActive(false);
     }
 }
