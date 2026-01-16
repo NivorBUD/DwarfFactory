@@ -4,64 +4,153 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
+// Класс для хранения данных одного слота без UI
+[System.Serializable]
+public class ChestSlotData
+{
+    public ItemScriptableObject item;
+    public int amount;
+
+    public ChestSlotData()
+    {
+        item = null;
+        amount = 0;
+    }
+
+    public ChestSlotData(ItemScriptableObject item, int amount)
+    {
+        this.item = item;
+        this.amount = amount;
+    }
+}
+
 public class Chest : Building
 {
-    private InventoryContainer inventoryContainer;
+    // Хранилище данных сундука (отдельное для каждого сундука)
+    private List<ChestSlotData> chestData = new List<ChestSlotData>();
+    private AudioSource audioSource;
+    private AudioClip openChestSound;
+    private AudioClip closeChestSound;
+    private GameObject tipG;
+    private GameObject player;
+    private int slotCount = 0;
 
     private void Start()
     {
-        inventoryContainer = new();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        
+        openChestSound = Resources.Load<AudioClip>("Sounds/OpenChest");
+        closeChestSound = Resources.Load<AudioClip>("Sounds/CloseChest");
+
+        // Находим дочерний объект tipG
+        tipG = transform.Find("tipG")?.gameObject;
+        if (tipG != null)
+        {
+            tipG.SetActive(false);
+        }
+
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+        if (player == null || tipG == null) return;
 
-            if (hit.collider != null && hit.collider.gameObject == gameObject)
-            {
-                InventoryManager.Instance.OpenChest(this);
-            }
+        float distance = Vector2.Distance(player.transform.position, transform.position);
+        bool isInRange = distance <= 2f;
+
+        if (tipG.activeSelf != isInRange)
+        {
+            tipG.SetActive(isInRange);
         }
     }
+
+
 
     public void InizializeUISlotsFromSlotsList(List<InventorySlot> chestSlots)
     {
-        bool isSlotsSet = inventoryContainer.Slots.Count == chestSlots.Count;
-        List<InventorySlot> slots = new();
-        for (int i = 0; i < chestSlots.Count; i++)
+        // Первая инициализация - создаем пустое хранилище
+        if (chestData.Count == 0)
         {
-            if (isSlotsSet)
+            slotCount = chestSlots.Count;
+            for (int i = 0; i < slotCount; i++)
             {
-                chestSlots[i].Set(inventoryContainer.Slots[i].Item, inventoryContainer.Slots[i].Amount);
-            }
-            else
-            {
-                chestSlots[i].Clear();
-                slots.Add(chestSlots[i].Copy());
+                chestData.Add(new ChestSlotData());
             }
         }
-        if (!isSlotsSet)
+
+        // Загружаем данные этого сундука в UI слоты
+        for (int i = 0; i < chestSlots.Count && i < chestData.Count; i++)
         {
-            inventoryContainer.SetNewSlots(slots);
+            chestSlots[i].Set(chestData[i].item, chestData[i].amount);
         }
     }
 
     public int AddItems(ItemScriptableObject item, int amount)
-        => inventoryContainer.AddItems(item, amount);
+    {
+        // Добавляем в существующие стаки
+        for (int i = 0; i < chestData.Count; i++)
+        {
+            if (amount <= 0) return 0;
+
+            if (chestData[i].item == item && chestData[i].amount < item.maximumAmount)
+            {
+                int space = item.maximumAmount - chestData[i].amount;
+                int addAmount = Mathf.Min(amount, space);
+                chestData[i].amount += addAmount;
+                amount -= addAmount;
+            }
+        }
+
+        // Добавляем в пустые слоты
+        for (int i = 0; i < chestData.Count; i++)
+        {
+            if (amount <= 0) return 0;
+
+            if (chestData[i].item == null)
+            {
+                int placeAmount = Mathf.Min(amount, item.maximumAmount);
+                chestData[i].item = item;
+                chestData[i].amount = placeAmount;
+                amount -= placeAmount;
+            }
+        }
+
+        return amount;
+    }
 
     public void SaveData(List<InventorySlot> newSlots)
     {
-        for (int i = 0; i < inventoryContainer.Slots.Count; i++)
+        // Сохраняем данные из UI слотов в хранилище этого сундука
+        for (int i = 0; i < newSlots.Count && i < chestData.Count; i++)
         {
-            inventoryContainer.Slots[i].Set(newSlots[i].Item, newSlots[i].Amount);
+            chestData[i].item = newSlots[i].Item;
+            chestData[i].amount = newSlots[i].Amount;
         }
     }
 
     public override void interaction()
     {
         InventoryManager.Instance.OpenChest(this);
+    }
+
+    public void PlayOpenSound()
+    {
+        if (audioSource != null && openChestSound != null)
+        {
+            audioSource.PlayOneShot(openChestSound);
+        }
+    }
+
+    public void PlayCloseSound()
+    {
+        if (audioSource != null && closeChestSound != null)
+        {
+            audioSource.PlayOneShot(closeChestSound);
+        }
     }
 }

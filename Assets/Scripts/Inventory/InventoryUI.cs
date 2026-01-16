@@ -106,6 +106,10 @@ public class InventoryUI : MonoBehaviour
         if (chestInventory != null && chestInventory.activeSelf)
         {
             InventoryManager.Instance?.SaveChestInventory();
+            if (InventoryManager.Instance?.OpenedChest != null)
+            {
+                InventoryManager.Instance.OpenedChest.PlayCloseSound();
+            }
         }
 
         if (buildingsUI != null && buildingsUI.activeSelf)

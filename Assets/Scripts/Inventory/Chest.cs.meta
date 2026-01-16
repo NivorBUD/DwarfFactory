@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 556c499e5a026ab4d85ab5c0b5bf2540
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - openChestSound: {fileID: 8300000, guid: 53f1a7e78e7e0e345ade4478af539d62, type: 3}
+  - closeChestSound: {fileID: 8300000, guid: 682dd420ffb1d0c4fb25483149e439d5, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

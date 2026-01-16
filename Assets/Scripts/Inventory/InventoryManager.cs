@@ -191,6 +191,7 @@ public class InventoryManager : MonoBehaviour
     {
         OpenedChest = chest;
         OpenedChest.InizializeUISlotsFromSlotsList(chestSlots);
+        OpenedChest.PlayOpenSound();
         ui.OpenChest();
     }
 

@@ -20,14 +20,10 @@ public class InventorySlot : MonoBehaviour
 
     public virtual InventorySlot Copy()
     {
-        InventorySlot newSlot = new();
-        newSlot.BGImage = BGImage;
-        newSlot.iconImage = iconImage;
-        newSlot.textAmount = textAmount;
-        newSlot.Item = Item;
-        newSlot.Amount = Amount;
-
-        return newSlot;
+        // Р­С‚РѕС‚ РјРµС‚РѕРґ РЅРµ РґРѕР»Р¶РµРЅ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІС‹С… СЃР»РѕС‚РѕРІ
+        // РћРЅ РЅСѓР¶РµРЅ С‚РѕР»СЊРєРѕ РґР»СЏ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РґР°РЅРЅС‹С…
+        Debug.LogError("Copy() method should not be used to create new MonoBehaviour instances!");
+        return this;
     }
 
     private void Awake()
@@ -122,7 +118,7 @@ public class InventorySlot : MonoBehaviour
     }
 
     /// <summary>
-    /// Смена фона слота, для активных слотов в панели быстрых слотов
+    /// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public void ChangBG(Color color)
     {
@@ -130,7 +126,7 @@ public class InventorySlot : MonoBehaviour
     }
 
     /// <summary>
-    /// Смена фона слота на стандартный, для активных слотов в панели быстрых слотов
+    /// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public void ChangeBGToStandard()
     {

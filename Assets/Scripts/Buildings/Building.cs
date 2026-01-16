@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,30 +23,65 @@ abstract public class Building : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        // Подписываемся сразу если InputHandler уже есть
         if (InputHandler.Instance != null)
         {
-            InputHandler.Instance.OnBuildingInteract += HandleInteraction;
+            InputHandler.Instance.OnInteract += TryInteract;
         }
+        else
+        {
+            // Если InputHandler еще не создан, подпишемся позже
+            StartCoroutine(WaitForInputHandler());
+        }
+    }
+
+    private IEnumerator WaitForInputHandler()
+    {
+        // Ждем пока InputHandler инициализируется
+        while (InputHandler.Instance == null)
+        {
+            yield return null;
+        }
+        InputHandler.Instance.OnInteract += TryInteract;
     }
 
     protected virtual void OnDisable()
     {
         if (InputHandler.Instance != null)
         {
-            InputHandler.Instance.OnBuildingInteract -= HandleInteraction;
+            InputHandler.Instance.OnInteract -= TryInteract;
         }
     }
 
-    private void HandleInteraction()
+    private void TryInteract()
     {
-        if (Mouse.current == null) return;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
 
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-
-        if (hit.collider != null && hit.collider.gameObject == gameObject)
+        float distance = Vector2.Distance(player.transform.position, transform.position);
+        
+        if (distance <= 2f)
         {
-            interaction();
+            // Проверяем, нет ли более близкого здания
+            Building[] allBuildings = FindObjectsOfType<Building>();
+            Building closest = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (Building building in allBuildings)
+            {
+                float dist = Vector2.Distance(player.transform.position, building.transform.position);
+                if (dist <= 2f && dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    closest = building;
+                }
+            }
+
+            // Взаимодействуем только если это здание - самое близкое
+            if (closest == this)
+            {
+                interaction();
+            }
         }
     }
 

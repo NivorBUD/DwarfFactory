@@ -22,6 +22,7 @@ public class InputHandler : MonoBehaviour
     public event Action OnScrollDown;
     public event Action OnBuildingInteract;
     public event Action OnChestInteract;
+    public event Action OnInteract; // G key
 
     // Флаги состояния для модификаторов
     public bool IsShiftHeld { get; private set; }
@@ -84,6 +85,12 @@ public class InputHandler : MonoBehaviour
             OnBuildingPlace?.Invoke();
         }
 
+        // Взаимодействие (G)
+        if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
+        {
+            OnInteract?.Invoke();
+        }
+
         // Быстрые слоты (1-9)
         if (Keyboard.current != null)
         {
@@ -114,19 +121,6 @@ public class InputHandler : MonoBehaviour
             {
                 OnScrollDown?.Invoke();
             }
-        }
-
-        // Взаимодействие с объектами (ПКМ)
-        if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            OnBuildingInteract?.Invoke();
-            OnChestInteract?.Invoke();
-        }
-
-        // Размещение здания (ЛКМ)
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            // Это обрабатывается в BuildingsGrid
         }
 
         // Модификаторы
