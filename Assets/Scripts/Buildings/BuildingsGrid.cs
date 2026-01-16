@@ -86,6 +86,9 @@ public class BuildingsGrid : MonoBehaviour
                     // Включаем коллайдеры обратно у установленного здания
                     EnableColliders(placedBuilding);
                     
+                    // Воспроизводим звук установки здания
+                    PlayPlacementSound();
+                    
                     CreateTipGForBuilding(placedBuilding);
                     //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
@@ -199,6 +202,27 @@ public class BuildingsGrid : MonoBehaviour
         foreach (Collider2D collider in colliders)
         {
             collider.enabled = true;
+        }
+    }
+
+    private void PlayPlacementSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound("sounds/craft");
+        }
+        else
+        {
+            // Если AudioManager недоступен, воспроизводим напрямую
+            AudioClip clip = Resources.Load<AudioClip>("sounds/craft");
+            if (clip != null)
+            {
+                AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
+            }
+            else
+            {
+                Debug.LogWarning("[BuildingsGrid] Не удалось загрузить звук установки здания");
+            }
         }
     }
 }
