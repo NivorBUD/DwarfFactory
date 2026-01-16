@@ -13,8 +13,12 @@ public class BotFollower : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator animator;
 
+    [Header("UI")]
+    [SerializeField] private Transform tipG;
+
     private Rigidbody2D rb;
     private Vector2 randomOffset;
+    private Vector3 tipGOriginalScale;
 
     private void Start()
     {
@@ -32,6 +36,14 @@ public class BotFollower : MonoBehaviour
 
         if (animator == null)
             animator = GetComponent<Animator>();
+
+        // Ищем tipG если не назначен
+        if (tipG == null)
+            tipG = transform.Find("tipG");
+
+        // Сохраняем исходный scale подсказки
+        if (tipG != null)
+            tipGOriginalScale = tipG.localScale;
 
         // Случайное смещение для каждого бота
         randomOffset = Random.insideUnitCircle * 0.5f;
@@ -89,6 +101,9 @@ public class BotFollower : MonoBehaviour
             animator.SetFloat("Speed", velocity.magnitude);
             animator.SetBool("IsWalking", isMoving);
         }
+
+        // Компенсируем поворот для tipG
+        UpdateTipGRotation();
     }
 
     // --- Метод смерти, который будет использоваться в игре ---
@@ -113,6 +128,27 @@ public class BotFollower : MonoBehaviour
         Destroy(gameObject, 3f); 
     }
     // --------------------------------------------------------
+
+    // Компенсация поворота для tipG
+    private void UpdateTipGRotation()
+    {
+        if (tipG == null) return;
+
+        // Компенсируем поворот родителя по оси X
+        Vector3 newScale = tipGOriginalScale;
+        
+        // Если бот перевернут (отрицательный scale.x), переворачиваем tipG обратно
+        if (transform.localScale.x < 0)
+        {
+            newScale.x = -Mathf.Abs(tipGOriginalScale.x);
+        }
+        else
+        {
+            newScale.x = Mathf.Abs(tipGOriginalScale.x);
+        }
+
+        tipG.localScale = newScale;
+    }
 
     private void OnDrawGizmosSelected()
     {

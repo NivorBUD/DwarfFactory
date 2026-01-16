@@ -36,6 +36,11 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject quickSlots;
     [SerializeField] private GameObject craftingPanel;
 
+    [Header("Audio")]
+    private AudioClip inventoryOpenSound;
+    private AudioClip inventoryCloseSound;
+    private AudioSource audioSource;
+
     private bool IsUIOpen;
 
     public bool IsInventoryOpened => IsUIOpen;
@@ -56,7 +61,17 @@ public class InventoryUI : MonoBehaviour
     public void Initialize(InventoryContainer container)
     {
         this.container = container;
-        //Refresh();
+        
+        // Получаем или создаем AudioSource
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        
+        // Загружаем звуки из Resources
+        inventoryOpenSound = Resources.Load<AudioClip>("Sounds/inventoryOpen");
+        inventoryCloseSound = Resources.Load<AudioClip>("Sounds/inventoryClose");
     }
 
     public void UpdateSlot(int index, ItemScriptableObject item, int amount)
@@ -81,6 +96,10 @@ public class InventoryUI : MonoBehaviour
     public void Open()
     {
         IsUIOpen = true;
+        
+        // Воспроизводим звук открытия инвентаря
+        PlayInventorySound(inventoryOpenSound);
+        
         if (IsCraftingBuildingOpened)
         {
             OpenCraftingBuildingUI();
@@ -102,6 +121,9 @@ public class InventoryUI : MonoBehaviour
     public void Close()
     {
         IsUIOpen = false;
+
+        // Воспроизводим звук закрытия инвентаря
+        PlayInventorySound(inventoryCloseSound);
 
         if (chestInventory != null && chestInventory.activeSelf)
         {
@@ -230,6 +252,14 @@ public class InventoryUI : MonoBehaviour
         foreach (GameObject gameObject in gameObjects)
         {
             if (gameObject != null) gameObject.SetActive(false);
+        }
+    }
+
+    private void PlayInventorySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 

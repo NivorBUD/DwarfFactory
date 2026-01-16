@@ -68,22 +68,7 @@ public class Dwarf : MonoBehaviour
         return false;
     }
 
-    private void Update()
-    {
-        if (Mouse.current == null) return;
-
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-
-        if (hit.collider != null && hit.collider.gameObject == gameObject)
-        {
-            if (Mouse.current.leftButton.isPressed)
-            {
-                Interaction();
-            }
-            
-        }
-    }
+    // Удалено открытие по клику мыши - теперь используется кнопка G через InputHandler
 
     public void UnequipAll()
     {

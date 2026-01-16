@@ -73,9 +73,19 @@ public class InputHandler : MonoBehaviour
             OnInventoryToggle?.Invoke();
         }
 
-        // Пауза (Escape)
+        // Пауза (Escape) - также закрывает открытые инвентари
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
+            // Если открыт сундук или инвентарь бота - закрываем его
+            if (InventoryManager.Instance != null && InventoryManager.Instance.ui.IsInventoryOpened)
+            {
+                if (InventoryManager.Instance.ui.IsChestOpened || InventoryManager.Instance.ui.IsDwarfOpened)
+                {
+                    InventoryManager.Instance.CloseInventoryFromButton();
+                    return;
+                }
+            }
+            
             OnPauseToggle?.Invoke();
         }
 
@@ -88,6 +98,7 @@ public class InputHandler : MonoBehaviour
         // Взаимодействие (G)
         if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
         {
+            Debug.Log("InputHandler: Нажата клавиша G, вызываем OnInteract");
             OnInteract?.Invoke();
         }
 

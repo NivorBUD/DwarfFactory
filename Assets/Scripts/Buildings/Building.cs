@@ -23,36 +23,18 @@ abstract public class Building : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        // Подписываемся сразу если InputHandler уже есть
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInteract += TryInteract;
-        }
-        else
-        {
-            // Если InputHandler еще не создан, подпишемся позже
-            StartCoroutine(WaitForInputHandler());
-        }
-    }
-
-    private IEnumerator WaitForInputHandler()
-    {
-        // Ждем пока InputHandler инициализируется
-        while (InputHandler.Instance == null)
-        {
-            yield return null;
-        }
-        InputHandler.Instance.OnInteract += TryInteract;
+        // Логика взаимодействия теперь управляется через InteractionController
+        // Старая система подписки на OnInteract отключена
     }
 
     protected virtual void OnDisable()
     {
-        if (InputHandler.Instance != null)
-        {
-            InputHandler.Instance.OnInteract -= TryInteract;
-        }
+        // Логика взаимодействия теперь управляется через InteractionController
+        // Старая система подписки на OnInteract отключена
     }
 
+    // Метод больше не используется - взаимодействие через InteractionController
+    /*
     private void TryInteract()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -84,6 +66,7 @@ abstract public class Building : MonoBehaviour
             }
         }
     }
+    */
 
     abstract public void interaction();
 }

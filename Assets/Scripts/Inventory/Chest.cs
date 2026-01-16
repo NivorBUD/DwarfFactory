@@ -31,8 +31,6 @@ public class Chest : Building
     private AudioSource audioSource;
     private AudioClip openChestSound;
     private AudioClip closeChestSound;
-    private GameObject tipG;
-    private GameObject player;
     private int slotCount = 0;
 
     private void Start()
@@ -45,28 +43,6 @@ public class Chest : Building
         
         openChestSound = Resources.Load<AudioClip>("Sounds/OpenChest");
         closeChestSound = Resources.Load<AudioClip>("Sounds/CloseChest");
-
-        // Находим дочерний объект tipG
-        tipG = transform.Find("tipG")?.gameObject;
-        if (tipG != null)
-        {
-            tipG.SetActive(false);
-        }
-
-        player = GameObject.FindGameObjectWithTag("Player");
-    }
-
-    private void Update()
-    {
-        if (player == null || tipG == null) return;
-
-        float distance = Vector2.Distance(player.transform.position, transform.position);
-        bool isInRange = distance <= 2f;
-
-        if (tipG.activeSelf != isInRange)
-        {
-            tipG.SetActive(isInRange);
-        }
     }
 
 
