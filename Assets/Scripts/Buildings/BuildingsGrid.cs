@@ -15,6 +15,7 @@ public class BuildingsGrid : MonoBehaviour
     private Camera cam;
     private Grid grid;
     private Building flyingBuilding;
+    private SpriteRenderer buildingSpriteRenderer;
     private Dictionary<Vector3Int, Vector2Int> busyPositions = new(); // positition left bottom : size
 
     private void Awake()
@@ -32,6 +33,17 @@ public class BuildingsGrid : MonoBehaviour
         }
 
         flyingBuilding = Instantiate(buildingPrefab);
+        
+        // Находим дочерний объект Sprite
+        Transform spriteTransform = flyingBuilding.transform.Find("Sprite");
+        if (spriteTransform != null)
+        {
+            buildingSpriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();
+        }
+        
+        // Отключаем все коллайдеры у здания во время размещения
+        DisableColliders(flyingBuilding.gameObject);
+        
         IsPlacingBuilding = true;
     }
 
@@ -45,12 +57,30 @@ public class BuildingsGrid : MonoBehaviour
             Vector3Int pos = grid.WorldToCell(MousePos);
             flyingBuilding.transform.position = new Vector3Int(pos.x + 1, pos.y + 1, 0);
             
+            // Проверяем можно ли установить здание и меняем цвет
+            bool canPlace = CheckToPlaceBuilding(pos);
+            UpdateBuildingColor(canPlace);
+            
             if (Mouse.current.leftButton.wasPressedThisFrame)
             { 
-                bool canPlace = CheckToPlaceBuilding(pos);
                 if (canPlace)
                 {
                     GameObject placedBuilding = Instantiate(flyingBuilding.gameObject);
+                    
+                    // Возвращаем исходный цвет установленному зданию
+                    Transform placedSprite = placedBuilding.transform.Find("Sprite");
+                    if (placedSprite != null)
+                    {
+                        SpriteRenderer sr = placedSprite.GetComponent<SpriteRenderer>();
+                        if (sr != null)
+                        {
+                            sr.color = Color.white;
+                        }
+                    }
+                    
+                    // Включаем коллайдеры обратно у установленного здания
+                    EnableColliders(placedBuilding);
+                    
                     CreateTipGForBuilding(placedBuilding);
                     //buildingsTilemap.SetTile(grid.WorldToCell(MousePos), flyingBuilding.GetTile());
                     busyPositions.Add(pos, flyingBuilding.Size);
@@ -63,16 +93,49 @@ public class BuildingsGrid : MonoBehaviour
     public void StopPlacingBuilding()
     {
         Destroy(flyingBuilding.gameObject);
+        buildingSpriteRenderer = null;
         IsPlacingBuilding = false;
+    }
+
+    private void UpdateBuildingColor(bool canPlace)
+    {
+        if (buildingSpriteRenderer == null) return;
+
+        if (canPlace)
+        {
+            // Зеленый оттенок
+            buildingSpriteRenderer.color = new Color(0.5f, 1f, 0.5f, 1f);
+        }
+        else
+        {
+            // Красный оттенок
+            buildingSpriteRenderer.color = new Color(1f, 0.5f, 0.5f, 1f);
+        }
     }
 
     private bool CheckToPlaceBuilding(Vector3Int gridPlace)
     {
-        Rect rect1 = new(gridPlace.x, gridPlace.y, flyingBuilding.Size.x, flyingBuilding.Size.y);
+        Rect buildingRect = new(gridPlace.x, gridPlace.y, flyingBuilding.Size.x, flyingBuilding.Size.y);
+        
+        // Проверка пересечения с другими зданиями
         foreach (Vector3Int pos in busyPositions.Keys)
         {
             Rect rect2 = new(pos.x, pos.y, busyPositions[pos].x, busyPositions[pos].y);
-            if (rect1.Overlaps(rect2))
+            if (buildingRect.Overlaps(rect2))
+            {
+                return false;
+            }
+        }
+
+        // Проверка пересечения с игроком
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Vector3Int playerGridPos = grid.WorldToCell(player.transform.position);
+            // Считаем что игрок занимает 1 клетку
+            Rect playerRect = new(playerGridPos.x, playerGridPos.y, 1, 1);
+            
+            if (buildingRect.Overlaps(playerRect))
             {
                 return false;
             }
@@ -112,5 +175,25 @@ public class BuildingsGrid : MonoBehaviour
 
         // По умолчанию скрываем подсказку
         tipG.SetActive(false);
+    }
+
+    private void DisableColliders(GameObject obj)
+    {
+        // Отключаем все коллайдеры на объекте и его дочерних объектах
+        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = false;
+        }
+    }
+
+    private void EnableColliders(GameObject obj)
+    {
+        // Включаем все коллайдеры на объекте и его дочерних объектах
+        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+        foreach (Collider2D collider in colliders)
+        {
+            collider.enabled = true;
+        }
     }
 }
